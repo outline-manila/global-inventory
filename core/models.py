@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 import uuid
 # Create your models here.
 
-class CustomUserManager():
+class CustomUserManager(BaseUserManager):
     def create_user(self, email, first_name, last_name, password, **kw):
         if not email:
             raise ValueError('The given email address must be set')
@@ -22,9 +22,9 @@ class CustomUserManager():
 
         return user
 
-    def create_superuser(self, email, password, **kw):
+    def create_superuser(self, email, first_name, last_name, password, **kw):
 
-        user = self._create_user(email, password, **kw)
+        user = self.create_user(email, first_name, last_name, password, **kw)
         user.is_staff = True
         user.is_active = True
         user.is_superuser = True

@@ -54,6 +54,7 @@ AUTH_USER_MODEL = 'core.User'
 
 ROOT_URLCONF = 'global_backend.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -78,8 +79,12 @@ WSGI_APPLICATION = 'global_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'vUWAtqOrcDpJq5P5Qo2b',
+        'HOST': 'containers-us-west-62.railway.app',
+        'PORT': '6515'
     }
 }
 
