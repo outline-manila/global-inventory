@@ -4,6 +4,7 @@ import uuid
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):
+
     def create_user(self, email, first_name, last_name, password, **kw):
         if not email:
             raise ValueError('The given email address must be set')
