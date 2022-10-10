@@ -7,14 +7,14 @@ import json
 from rest_framework.response import Response
 
 # class SupplierView(mixins.ListModelMixin, generics.API):
-class SupplierDetailAPIView(generics.RetrieveAPIView, generics.ListAPIView):
+class SupplierDetailAPIView(generics.RetrieveAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
     lookup_field = 'pk'
 
 supplier_detail_view = SupplierDetailAPIView.as_view()
 
-class SupplierListAPIView(generics.RetrieveAPIView):
+class SupplierListAPIView(generics.ListAPIView):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
 

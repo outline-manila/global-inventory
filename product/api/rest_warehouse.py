@@ -13,7 +13,7 @@ class WarehouseDetailAPIView(generics.RetrieveAPIView):
 
 warehouse_detail_view = WarehouseDetailAPIView.as_view()
 
-class WarehouseListAPIView(generics.RetrieveAPIView):
+class WarehouseListAPIView(generics.ListAPIView):
     queryset = Warehouse.objects.all()
     serializer_class = WarehouseSerializer
 

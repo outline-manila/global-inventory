@@ -9,14 +9,14 @@ from django.shortcuts import get_object_or_404
 
 # class UnitView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
-class UnitDetailAPIView(generics.ListAPIView):
+class UnitDetailAPIView(generics.RetrieveAPIView):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
     lookup_field = 'pk'
 
 unit_detail_view = UnitDetailAPIView.as_view()
 
-class UnitListAPIView(generics.RetrieveAPIView):
+class UnitListAPIView(generics.ListAPIView):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
 

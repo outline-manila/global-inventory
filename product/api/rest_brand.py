@@ -9,14 +9,14 @@ from django.shortcuts import get_object_or_404
 
 # class BrandView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
-class BrandDetailAPIView(generics.ListAPIView):
+class BrandDetailAPIView(generics.RetrieveAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'pk'
 
 brand_detail_view = BrandDetailAPIView.as_view()
 
-class BrandListAPIView(generics.RetrieveAPIView):
+class BrandListAPIView(generics.ListAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
 
