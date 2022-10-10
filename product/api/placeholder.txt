@@ -1,0 +1,5 @@
+    path('xxx/', rest_xxx.xxx_list_view,  name='xxx_list'),
+    path('xxx/<int:pk>/', rest_xxx.xxx_detail_view,  name='xxx-detail'),
+    path('xxx/create/', rest_xxx.xxx_create_view, name='xxx_create'),
+    path('xxx/update/<int:pk>', rest_xxx.xxx_update_view, name='xxx_update'),
+    path('xxx/search/', rest_xxx.xxx_search_view, name='xxx_search'),

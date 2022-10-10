@@ -13,7 +13,6 @@ from ..models import User
 # @user_passes_test(lambda u: u.is_superuser)
 @api_view(['POST'])
 def post_create_user(request):
-    if request.method != 'POST': return Response({'message': 'HTTP method not allowed'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
@@ -33,6 +32,7 @@ def post_create_user(request):
     
     else:
         user = User.objects.create_user(email, first_name, last_name, password)
+
     print(type(user))
     print(user)
     print("#"*100)

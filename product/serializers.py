@@ -12,7 +12,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'employee_id', 
             'first_name', 
             'last_name', 
-            'job_role', 
+            # 'job_role', 
             'joined_on'
         )
 
