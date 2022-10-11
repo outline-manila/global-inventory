@@ -2,7 +2,7 @@ from product.api.rest_brand import BrandDetailAPIView
 from django.urls import path, include
 
 from . import views
-from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit
+from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit, rest_part_no, rest_job_role, rest_user
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -44,5 +44,26 @@ urlpatterns = [
     path('unit/create/', rest_unit.unit_create_view, name='unit_create'),
     path('unit/update/<int:pk>', rest_unit.unit_update_view, name='unit_update'),
     path('unit/search/', rest_unit.unit_search_view, name='unit_search'),
+
+    #job role
+    path('job_role/', rest_job_role.job_role_list_view,  name='job_role_list'),
+    path('job_role/<int:pk>/', rest_job_role.job_role_detail_view,  name='job_role-detail'),
+    path('job_role/create/', rest_job_role.job_role_create_view, name='job_role_create'),
+    path('job_role/update/<int:pk>', rest_job_role.job_role_update_view, name='job_role_update'),
+    path('job_role/search/', rest_job_role.job_role_search_view, name='job_role_search'),
+
+    #part number
+    path('part_no/', rest_part_no.part_no_list_view,  name='part_no_list'),
+    path('part_no/<int:pk>/', rest_part_no.part_no_detail_view,  name='part_no-detail'),
+    path('part_no/create/', rest_part_no.part_no_create_view, name='part_no_create'),
+    path('part_no/update/<int:pk>', rest_part_no.part_no_update_view, name='part_no_update'),
+    path('part_no/search/', rest_part_no.part_no_search_view, name='part_no_search'),
+
+    #user
+    path('user/', rest_user.user_list_view,  name='user_list'),
+    path('user/<int:pk>/', rest_user.user_detail_view,  name='user-detail'),
+    path('user/create/', rest_user.user_create_view, name='user_create'),
+    path('user/update/<int:pk>', rest_user.user_update_view, name='user_update'),
+    path('user/search/', rest_user.user_search_view, name='user_search'),
 
 ]

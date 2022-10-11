@@ -19,32 +19,32 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = JobRole
-        fields = ('id', 'job_role', 'is_active','updated_at', 'created_at')
+        fields = ('id', 'job_role', 'is_active','updated_at', 'created_at', 'end_date')
 
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PartNo
-        fields = ('id', 'part_no', 'is_active','updated_at', 'created_at')
+        fields = ('id', 'part_no', 'is_active','updated_at', 'created_at', 'end_date')
 
 class UnitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Unit
-        fields = ('id', 'unit', 'is_active','updated_at', 'created_at')
+        fields = ('id', 'unit', 'is_active','updated_at', 'created_at', 'end_date')
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Supplier
-        fields = ('id', 'supplier', 'is_active','updated_at', 'created_at')
+        fields = ('id', 'supplier', 'is_active','updated_at', 'created_at', 'end_date')
     
 class BrandSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Brand
-        fields = ('id', 'brand', 'is_active','updated_at', 'created_at')
+        fields = ('id', 'brand', 'is_active','updated_at', 'created_at', 'end_date')
 
 class WarehouseSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Warehouse
-        fields = ('id', 'warehouse_no', 'is_active','updated_at', 'created_at')
+        fields = ('id', 'warehouse_no', 'is_active','updated_at', 'created_at', 'end_date')
         
 
 class ProductSerializer(serializers.ModelSerializer):
