@@ -2,11 +2,11 @@ from product.api.rest_brand import BrandDetailAPIView
 from django.urls import path, include
 
 from . import views
-from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit, rest_part_no, rest_job_role, rest_user
+from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit, rest_part_no, rest_job_role
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('users', views.UserView)
+# router.register('users', views.UserView)
 router.register('brand', views.BrandView)
 router.register('supplier', views.SupplierView)
 router.register('job_role', views.JobRoleView)
@@ -60,10 +60,10 @@ urlpatterns = [
     path('part_no/search/', rest_part_no.part_no_search_view, name='part_no_search'),
 
     #user
-    path('user/', rest_user.user_list_view,  name='user_list'),
-    path('user/<int:pk>/', rest_user.user_detail_view,  name='user-detail'),
-    path('user/create/', rest_user.user_create_view, name='user_create'),
-    path('user/update/<int:pk>', rest_user.user_update_view, name='user_update'),
-    path('user/search/', rest_user.user_search_view, name='user_search'),
+    # path('user/', rest_user.user_list_view,  name='user_list'),
+    # path('user/<int:pk>/', rest_user.user_detail_view,  name='user-detail'),
+    # path('user/create/', rest_user.user_create_view, name='user_create'),
+    # path('user/update/<int:pk>', rest_user.user_update_view, name='user_update'),
+    # path('user/search/', rest_user.user_search_view, name='user_search'),
 
 ]
