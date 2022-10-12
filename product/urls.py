@@ -59,7 +59,7 @@ urlpatterns = [
     path('part_no/update/<int:pk>', rest_part_no.part_no_update_view, name='part_no_update'),
     path('part_no/search/', rest_part_no.part_no_search_view, name='part_no_search'),
 
-    #user
+    # # user
     # path('user/', rest_user.user_list_view,  name='user_list'),
     # path('user/<int:pk>/', rest_user.user_detail_view,  name='user-detail'),
     # path('user/create/', rest_user.user_create_view, name='user_create'),

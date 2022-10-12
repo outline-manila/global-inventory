@@ -7,6 +7,8 @@ import json
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
+from product import serializers
+
 # class BrandView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
 class BrandDetailAPIView(generics.RetrieveAPIView):
@@ -32,6 +34,24 @@ class BrandUpdateAPIView(generics.UpdateAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        serializer = BrandSerializer(data=body) 
+
+        brand_name = body.get('brand')
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"Brand {brand_name} successfully updated"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict)
+        # return Response()
+
+
 
 brand_update_view = BrandUpdateAPIView.as_view()
 

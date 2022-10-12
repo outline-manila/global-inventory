@@ -41,6 +41,8 @@ class BrandSerializer(serializers.HyperlinkedModelSerializer):
         model = Brand
         fields = ('id', 'brand', 'is_active','updated_at', 'created_at', 'end_date')
 
+
+
 class WarehouseSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Warehouse

@@ -9,6 +9,7 @@ from core.api.create_user import post_create_user
 
 urlpatterns = [
     path('core/create/', post_create_user),
+    path('api/', include('core.urls') ),
     # path('api/', include(router.urls)),
     path('api/', include('product.urls') ),
     path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
