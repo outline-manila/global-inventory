@@ -12,41 +12,41 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'employee_id', 
             'first_name', 
             'last_name', 
-            # 'job_role', 
+            'job_role', 
             'joined_on'
         )
 
 class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = JobRole
-        fields = ('id', 'job_role', 'is_active','updated_at', 'created_at', 'end_date')
+        fields = ('id', 'job_role', 'description', 'is_active','updated_at', 'created_at', 'end_date')
 
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PartNo
-        fields = ('id', 'part_no', 'is_active','updated_at', 'created_at', 'end_date')
+        fields = ('id', 'part_no', 'description', 'is_active','updated_at', 'created_at', 'end_date')
 
 class UnitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Unit
-        fields = ('id', 'unit', 'is_active','updated_at', 'created_at', 'end_date')
+        fields = ('id', 'unit', 'description', 'is_active','updated_at', 'created_at', 'end_date')
 
 class SupplierSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Supplier
-        fields = ('id', 'supplier', 'is_active','updated_at', 'created_at', 'end_date')
+        fields = ('id', 'supplier', 'description', 'is_active','updated_at', 'created_at', 'end_date')
     
 class BrandSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Brand
-        fields = ('id', 'brand', 'is_active','updated_at', 'created_at', 'end_date')
+        fields = ('id', 'brand', 'description', 'is_active','updated_at', 'created_at', 'end_date')
 
 
 
 class WarehouseSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Warehouse
-        fields = ('id', 'warehouse_no', 'is_active','updated_at', 'created_at', 'end_date')
+        fields = ('id', 'warehouse_no', 'description', 'is_active','updated_at', 'created_at', 'end_date')
         
 
 class ProductSerializer(serializers.ModelSerializer):

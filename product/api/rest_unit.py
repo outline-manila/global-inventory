@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from ..models import Unit
 from ..serializers import UnitSerializer
@@ -25,6 +25,17 @@ unit_list_view = UnitListAPIView.as_view()
 class UnitCreateAPIView(generics.CreateAPIView):
     queryset = Unit.objects.all()
     serializer_class = UnitSerializer
+    def create(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        serializer = UnitSerializer(data=body) 
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"Unit {body.get('unit')} successfully created"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 unit_create_view = UnitCreateAPIView.as_view()
 
@@ -33,6 +44,21 @@ class UnitUpdateAPIView(generics.UpdateAPIView):
     serializer_class = UnitSerializer
     lookup_field = 'pk'
 
+
+    def update(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        serializer = UnitSerializer(data=body) 
+
+        unit_name = body.get('unit')
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"Unit {unit_name} successfully updated"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 unit_update_view = UnitUpdateAPIView.as_view()
 
 
@@ -61,8 +87,8 @@ def unit_search_view(request, pk=None, *args, **kwargs):
     p = Paginator(data, page_size)
 
     result = {}
-    result['total'] = p.count
-    result['numPages'] = p.num_pages
-    result['metadata'] = p.page(current_page).object_list
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
 
     return Response(result)

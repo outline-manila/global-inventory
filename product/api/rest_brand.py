@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from ..models import Brand
 from ..serializers import BrandSerializer
@@ -28,6 +28,18 @@ class BrandCreateAPIView(generics.CreateAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
 
+    def create(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        serializer = BrandSerializer(data=body) 
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"Brand {body.get('brand')} successfully created"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
+
 brand_create_view = BrandCreateAPIView.as_view()
 
 class BrandUpdateAPIView(generics.UpdateAPIView):
@@ -48,16 +60,14 @@ class BrandUpdateAPIView(generics.UpdateAPIView):
             return Response({"message": f"Brand {brand_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict)
-        # return Response()
-
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 
 brand_update_view = BrandUpdateAPIView.as_view()
 
 
 @api_view(['POST'])
-def brand_search_view(request, pk=None, *args, **kwargs):
+def brand_search_view(request, *args, **kwargs):
 
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
@@ -81,8 +91,8 @@ def brand_search_view(request, pk=None, *args, **kwargs):
     p = Paginator(data, page_size)
 
     result = {}
-    result['total'] = p.count
-    result['numPages'] = p.num_pages
-    result['metadata'] = p.page(current_page).object_list
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
 
     return Response(result)

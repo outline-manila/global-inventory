@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from ..models import Warehouse
 from ..serializers import WarehouseSerializer
@@ -22,6 +22,17 @@ warehouse_list_view = WarehouseListAPIView.as_view()
 class WarehouseCreateAPIView(generics.CreateAPIView):
     queryset = Warehouse.objects.all()
     serializer_class = WarehouseSerializer
+    def create(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        serializer = WarehouseSerializer(data=body) 
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"Warehouse {body.get('warehouse')} successfully created"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 warehouse_create_view = WarehouseCreateAPIView.as_view()
 
@@ -29,6 +40,22 @@ class WarehouseUpdateAPIView(generics.UpdateAPIView):
     queryset = Warehouse.objects.all()
     serializer_class = WarehouseSerializer
     lookup_field = 'pk'
+
+
+    def update(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        serializer = WarehouseSerializer(data=body) 
+
+        warehouse_name = body.get('warehouse')
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"Warehouse {warehouse_name} successfully updated"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 warehouse_update_view = WarehouseUpdateAPIView.as_view()
 
@@ -59,8 +86,8 @@ def warehouse_search_view(request, pk=None, *args, **kwargs):
     p = Paginator(data, page_size)
 
     result = {}
-    result['total'] = p.count
-    result['numPages'] = p.num_pages
-    result['metadata'] = p.page(current_page).object_list
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
 
     return Response(result)

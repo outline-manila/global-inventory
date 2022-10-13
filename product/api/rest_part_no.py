@@ -1,4 +1,4 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from ..models import PartNo
 from ..serializers import PartNoSerializer
@@ -26,12 +26,40 @@ class PartNoCreateAPIView(generics.CreateAPIView):
     queryset = PartNo.objects.all()
     serializer_class = PartNoSerializer
 
+    def create(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        serializer = PartNoSerializer(data=body) 
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"PartNo {body.get('part_no')} successfully created"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
+
 part_no_create_view = PartNoCreateAPIView.as_view()
 
 class PartNoUpdateAPIView(generics.UpdateAPIView):
     queryset = PartNo.objects.all()
     serializer_class = PartNoSerializer
     lookup_field = 'pk'
+
+
+    def update(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+
+        serializer = PartNoSerializer(data=body) 
+
+        part_no_name = body.get('part_no')
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"PartNo {part_no_name} successfully updated"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 part_no_update_view = PartNoUpdateAPIView.as_view()
 
@@ -61,8 +89,8 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     p = Paginator(data, page_size)
 
     result = {}
-    result['total'] = p.count
-    result['numPages'] = p.num_pages
-    result['metadata'] = p.page(current_page).object_list
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
 
     return Response(result)

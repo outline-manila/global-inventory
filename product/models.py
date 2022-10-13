@@ -21,6 +21,7 @@ def invoice_number():
 class PartNo(models.Model):
 
     part_no = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
@@ -29,6 +30,7 @@ class PartNo(models.Model):
 class Unit(models.Model):
 
     unit = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
@@ -37,6 +39,7 @@ class Unit(models.Model):
 class Supplier(models.Model):
 
     supplier = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
@@ -45,6 +48,7 @@ class Supplier(models.Model):
 class Brand(models.Model):
 
     brand = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
@@ -54,6 +58,7 @@ class Brand(models.Model):
 class JobRole(models.Model):
 
     job_role = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active =  models.BooleanField(default=True)
@@ -63,6 +68,7 @@ class JobRole(models.Model):
 class Warehouse(models.Model):
 
     warehouse_no = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     end_date = models.DateTimeField(blank=True, null=True, default=None)

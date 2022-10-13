@@ -1,3 +1,4 @@
+from product.models import JobRole
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 import uuid
@@ -41,6 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     password = models.CharField(max_length=120)
     employee_id = models.CharField(max_length=120)
     joined_on = models.DateTimeField(blank=True, null=True)
+    job_role = models.ForeignKey(JobRole, to_field="job_role", db_column="job_role", on_delete=models.DO_NOTHING, null=True)
 
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
