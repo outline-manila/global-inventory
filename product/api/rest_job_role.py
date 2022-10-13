@@ -5,7 +5,6 @@ from ..serializers import JobRoleSerializer
 from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 
 # class JobRoleView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
@@ -89,6 +88,7 @@ def job_role_search_view(request, pk=None, *args, **kwargs):
     p = Paginator(data, page_size)
 
     result = {}
+    result['metadata'] = {}
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages
     result['data'] = p.page(current_page).object_list

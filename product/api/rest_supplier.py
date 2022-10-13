@@ -87,6 +87,7 @@ def supplier_search_view(request, pk=None, *args, **kwargs):
     p = Paginator(data, page_size)
 
     result = {}
+    result['metadata'] = {}
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages
     result['data'] = p.page(current_page).object_list
