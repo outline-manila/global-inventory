@@ -56,7 +56,7 @@ class BrandUpdateAPIView(generics.UpdateAPIView):
         brand_name = body.get('brand')
 
         if serializer.is_valid():
-            serializer.save()
+            super(BrandUpdateAPIView, self).update(request, *args, **kwargs) 
             return Response({"message": f"Brand {brand_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}

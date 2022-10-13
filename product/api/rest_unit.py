@@ -54,7 +54,7 @@ class UnitUpdateAPIView(generics.UpdateAPIView):
         unit_name = body.get('unit')
 
         if serializer.is_valid():
-            serializer.save()
+            super(UnitUpdateAPIView, self).update(request, *args, **kwargs) 
             return Response({"message": f"Unit {unit_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}

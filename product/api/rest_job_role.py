@@ -54,7 +54,7 @@ class JobRoleUpdateAPIView(generics.UpdateAPIView):
         job_role_name = body.get('job_role')
 
         if serializer.is_valid():
-            serializer.save()
+            super(JobRoleUpdateAPIView, self).update(request, *args, **kwargs) 
             return Response({"message": f"JobRole {job_role_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}

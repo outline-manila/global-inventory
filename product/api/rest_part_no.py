@@ -55,7 +55,7 @@ class PartNoUpdateAPIView(generics.UpdateAPIView):
         part_no_name = body.get('part_no')
 
         if serializer.is_valid():
-            serializer.save()
+            super(PartNoUpdateAPIView, self).update(request, *args, **kwargs) 
             return Response({"message": f"PartNo {part_no_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}

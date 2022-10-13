@@ -28,7 +28,7 @@ class WarehouseCreateAPIView(generics.CreateAPIView):
         serializer = WarehouseSerializer(data=body) 
 
         if serializer.is_valid():
-            serializer.save()
+            super(WarehouseUpdateAPIView, self).update(request, *args, **kwargs) 
             return Response({"message": f"Warehouse {body.get('warehouse')} successfully created"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}

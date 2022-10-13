@@ -53,7 +53,7 @@ class SupplierUpdateAPIView(generics.UpdateAPIView):
         supplier_name = body.get('supplier')
 
         if serializer.is_valid():
-            serializer.save()
+            super(SupplierUpdateAPIView, self).update(request, *args, **kwargs) 
             return Response({"message": f"Supplier {supplier_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
