@@ -1,5 +1,6 @@
 from product.models import JobRole
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 import uuid
 # Create your models here.
@@ -43,6 +44,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     employee_id = models.CharField(max_length=120)
     joined_on = models.DateTimeField(blank=True, null=True)
     job_role = models.ForeignKey(JobRole, to_field="job_role", db_column="job_role", on_delete=models.DO_NOTHING, null=True)
+
+    updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
+    created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    start_date = models.DateField(blank=True, null=True, default=None)
+    end_date = models.DateField(blank=True, null=True, default=None)
 
     is_staff = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
