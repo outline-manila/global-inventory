@@ -49,12 +49,13 @@ class JobRoleUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        job_role = JobRole.objects.get(id=kwargs['pk'])
-        serializer = JobRoleSerializer(data=body, instance=job_role) 
+        serializer = JobRoleSerializer(data=body) 
+
+        job_role_name = body.get('job_role')
 
         if serializer.is_valid():
             super(JobRoleUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"JobRole {job_role.job_role} successfully updated"})
+            return Response({"message": f"JobRole {job_role_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)

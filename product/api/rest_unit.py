@@ -49,12 +49,13 @@ class UnitUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        unit = Unit.objects.get(id=kwargs['pk'])
-        serializer = UnitSerializer(data=body, instance=unit) 
+        serializer = UnitSerializer(data=body) 
+
+        unit_name = body.get('unit')
 
         if serializer.is_valid():
             super(UnitUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Unit {unit.unit} successfully updated"})
+            return Response({"message": f"Unit {unit_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)

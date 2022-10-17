@@ -51,14 +51,14 @@ class BrandUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        brand = Brand.objects.get(id=kwargs['pk'])
-        serializer = BrandSerializer(data=body, instance=brand) 
+        serializer = BrandSerializer(data=body) 
+
+        brand_name = body.get('brand')
 
         if serializer.is_valid():
             super(BrandUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Brand {brand.brand} successfully updated"})
+            return Response({"message": f"Brand {brand_name} successfully updated"})
 
-        
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
 

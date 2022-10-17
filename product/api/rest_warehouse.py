@@ -46,12 +46,13 @@ class WarehouseUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        warehouse = Warehouse.objects.get(id=kwargs['pk'])
-        serializer = WarehouseSerializer(data=body, instance=warehouse) 
+        serializer = WarehouseSerializer(data=body) 
+
+        warehouse_name = body.get('warehouse')
 
         if serializer.is_valid():
-            super(WarehouseUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Warehouse {warehouse.warehouse} successfully updated"})
+            serializer.save()
+            return Response({"message": f"Warehouse {warehouse_name} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
