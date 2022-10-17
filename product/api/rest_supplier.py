@@ -48,13 +48,12 @@ class SupplierUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        serializer = SupplierSerializer(data=body) 
-
-        supplier_name = body.get('supplier')
+        supplier = Supplier.objects.get(id=kwargs['pk'])
+        serializer = SupplierSerializer(data=body, instance=supplier) 
 
         if serializer.is_valid():
             super(SupplierUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Supplier {supplier_name} successfully updated"})
+            return Response({"message": f"Supplier {supplier.supplier} successfully updated"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)

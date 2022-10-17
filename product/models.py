@@ -20,13 +20,13 @@ def invoice_number():
 
 class PartNo(models.Model):
 
-    part_no = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    part = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
-    end_date = models.DateTimeField(blank=True, null=True, default=None)
-
+    start_date = models.DateField(blank=True, null=True, default=None)
+    end_date = models.DateField(blank=True, null=True, default=None)
 class Unit(models.Model):
 
     unit = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
@@ -34,7 +34,8 @@ class Unit(models.Model):
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
-    end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateField(blank=True, null=True, default=None)
+    end_date = models.DateField(blank=True, null=True, default=None)
 
 class Supplier(models.Model):
 
@@ -67,7 +68,7 @@ class JobRole(models.Model):
 
 class Warehouse(models.Model):
 
-    warehouse_no = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    warehouse = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
