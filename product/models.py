@@ -26,6 +26,7 @@ class PartNo(models.Model):
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
 
 class Unit(models.Model):
 
@@ -35,6 +36,7 @@ class Unit(models.Model):
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
 
 class Supplier(models.Model):
 
@@ -44,6 +46,7 @@ class Supplier(models.Model):
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
 
 class Brand(models.Model):
 
@@ -53,6 +56,7 @@ class Brand(models.Model):
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
 
 
 class JobRole(models.Model):
@@ -63,6 +67,7 @@ class JobRole(models.Model):
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active =  models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
 
 
 class Warehouse(models.Model):
@@ -71,6 +76,7 @@ class Warehouse(models.Model):
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     is_active = models.BooleanField(default=True)
 
