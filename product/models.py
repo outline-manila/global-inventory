@@ -22,9 +22,9 @@ class PartNo(models.Model):
 
     part = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
-    is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    is_active = models.BooleanField(default=True)
     start_date = models.DateField(blank=True, null=True, default=None)
     end_date = models.DateField(blank=True, null=True, default=None)
 class Unit(models.Model):
