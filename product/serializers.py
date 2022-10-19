@@ -24,7 +24,7 @@ class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PartNo
-        fields = ('id', 'part_no', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
+        fields = ('id', 'part', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
 
 class UnitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -46,7 +46,7 @@ class BrandSerializer(serializers.HyperlinkedModelSerializer):
 class WarehouseSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Warehouse
-        fields = ('id', 'warehouse_no', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
+        fields = ('id', 'warehouse', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
         
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -55,9 +55,9 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'uuid',
-            'warehouse_no',
-            'part_no',
-            'other_part_no',
+            'warehouse',
+            'part',
+            'other_part',
             'brand',
             'remaining_stock',
             'unit',
@@ -77,7 +77,7 @@ class TransactionHistorySerializer(serializers.ModelSerializer):
             'action',
             'description',
             'user_id',
-            'warehouse_no',
+            'warehouse',
             'product_id'
         )
 
