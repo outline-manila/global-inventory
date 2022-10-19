@@ -20,7 +20,7 @@ def invoice_number():
 
 class PartNo(models.Model):
 
-    part_no = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    part = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
@@ -72,7 +72,7 @@ class JobRole(models.Model):
 
 class Warehouse(models.Model):
 
-    warehouse_no = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    warehouse = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
@@ -83,9 +83,9 @@ class Warehouse(models.Model):
 
 class Product(models.Model):
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
-    warehouse_no = models.ForeignKey(Warehouse ,to_field="warehouse_no", db_column="warehouse_no", on_delete=models.DO_NOTHING)
-    part_no = models.ForeignKey(PartNo ,related_name="part" , to_field="part_no", db_column="part_no", on_delete=models.DO_NOTHING)
-    other_part_no = models.ForeignKey(PartNo ,related_name="other_part", to_field="part_no", db_column="other_part_no", on_delete=models.DO_NOTHING)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING, default='Nan')
+    part = models.ForeignKey(PartNo ,related_name="part_number" , to_field="part", db_column="part", on_delete=models.DO_NOTHING, default='NaN')
+    other_part = models.ForeignKey(PartNo ,related_name="other_part_number", to_field="part", db_column="other_part", on_delete=models.DO_NOTHING, default='NaN')
     description = models.TextField(blank=True, null=False)
     brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.DO_NOTHING)
     remaining_stock = models.IntegerField(blank=False, default=0, null=False)
@@ -103,5 +103,5 @@ class TransactionHistory(models.Model):
     action = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     user_id = models.ForeignKey("core.User", on_delete=models.DO_NOTHING)
-    warehouse_no = models.ForeignKey(Warehouse ,to_field="warehouse_no", db_column="warehouse_no", on_delete=models.DO_NOTHING)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_t" ,to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING, default='NaN')
     product_id = models.ForeignKey("Product", on_delete=models.DO_NOTHING)
