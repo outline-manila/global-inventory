@@ -2,6 +2,7 @@ from product.models import JobRole
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 import uuid
+from django.utils import timezone
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):

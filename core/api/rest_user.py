@@ -61,7 +61,7 @@ def user_search_view(request, pk=None, *args, **kwargs):
 
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
-    sort_by = body.get('sortBy') or '-updated_at'
+    sort_by = body.get('sortBy') or 'last_name'
     filter_by = body.get('filterBy')
     filter_id = body.get('filterById')
     filter_dict = None
