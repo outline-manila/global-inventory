@@ -5,6 +5,7 @@ from ..serializers import SupplierSerializer
 from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
+from django.utils import timezone
 
 # class SupplierView(mixins.ListModelMixin, generics.API):
 class SupplierDetailAPIView(generics.RetrieveAPIView):
@@ -48,16 +49,11 @@ class SupplierUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        serializer = SupplierSerializer(data=body) 
-
         supplier_name = body.get('supplier')
+        request.data.update({'updated_at': timezone.now()})
 
-        if serializer.is_valid():
-            super(SupplierUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Supplier {supplier_name} successfully updated"})
-
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict, status=status.HTTP_409_CONFLICT)
+        super(SupplierUpdateAPIView, self).update(request, *args, **kwargs) 
+        return Response({"message": f"Supplier {supplier_name} successfully updated"})
 
 supplier_update_view = SupplierUpdateAPIView.as_view()
 

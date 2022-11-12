@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 # class UnitView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
@@ -49,16 +50,12 @@ class UnitUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        serializer = UnitSerializer(data=body) 
-
         unit_name = body.get('unit')
+        request.data.update({'updated_at': timezone.now()})
 
-        if serializer.is_valid():
-            super(UnitUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Unit {unit_name} successfully updated"})
+        super(UnitUpdateAPIView, self).update(request, *args, **kwargs) 
+        return Response({"message": f"Unit {unit_name} successfully updated"})
 
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 unit_update_view = UnitUpdateAPIView.as_view()
 
 

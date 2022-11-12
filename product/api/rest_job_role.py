@@ -5,6 +5,7 @@ from ..serializers import JobRoleSerializer
 from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
+from django.utils import timezone
 
 # class JobRoleView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
@@ -49,16 +50,12 @@ class JobRoleUpdateAPIView(generics.UpdateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
 
-        serializer = JobRoleSerializer(data=body) 
-
         job_role_name = body.get('job_role')
+        request.data.update({'updated_at': timezone.now()})
 
-        if serializer.is_valid():
-            super(JobRoleUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"JobRole {job_role_name} successfully updated"})
+        super(JobRoleUpdateAPIView, self).update(request, *args, **kwargs) 
+        return Response({"message": f"JobRole {job_role_name} successfully updated"})
 
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 job_role_update_view = JobRoleUpdateAPIView.as_view()
 

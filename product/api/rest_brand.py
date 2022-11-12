@@ -1,13 +1,14 @@
+import json
+
+from django.core.paginator import Paginator
+from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from ..models import Brand
 from ..serializers import BrandSerializer
-from django.core.paginator import Paginator
-import json
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
 
-from product import serializers
 
 # class BrandView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
@@ -50,17 +51,11 @@ class BrandUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-
-        serializer = BrandSerializer(data=body) 
-
         brand_name = body.get('brand')
+        request.data.update({'updated_at': timezone.now()})
 
-        if serializer.is_valid():
-            super(BrandUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Brand {brand_name} successfully updated"})
-
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict, status=status.HTTP_409_CONFLICT)
+        super(BrandUpdateAPIView, self).update(request, *args, **kwargs) 
+        return Response({"message": f"Brand {brand_name} successfully updated"})
 
 
 brand_update_view = BrandUpdateAPIView.as_view()

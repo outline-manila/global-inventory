@@ -5,6 +5,7 @@ from ..serializers import WarehouseSerializer
 from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
+from django.utils import timezone
 
 class WarehouseDetailAPIView(generics.RetrieveAPIView):
     queryset = Warehouse.objects.all()
@@ -45,17 +46,11 @@ class WarehouseUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-
-        serializer = WarehouseSerializer(data=body) 
-
         warehouse_name = body.get('warehouse')
+        request.data.update({'updated_at': timezone.now()})
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response({"message": f"Warehouse {warehouse_name} successfully updated"})
-
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict, status=status.HTTP_409_CONFLICT)
+        super(WarehouseUpdateAPIView, self).update(request, *args, **kwargs) 
+        return Response({"message": f"Warehouse {warehouse_name} successfully updated"})
 
 warehouse_update_view = WarehouseUpdateAPIView.as_view()
 
