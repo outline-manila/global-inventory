@@ -6,6 +6,7 @@ from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 # class PartNoView(mixins.ListModelMixin, generics.API):
 # generics.RetrieveAPIView, 
@@ -33,7 +34,7 @@ class PartNoCreateAPIView(generics.CreateAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": f"PartNo {body.get('part_no')} successfully created"})
+            return Response({"message": f"PartNo {body.get('part')} successfully created"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
@@ -49,17 +50,11 @@ class PartNoUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
+        part_no_name = body.get('part')
+        request.data.update({'updated_at': timezone.now()})
+        super(PartNoUpdateAPIView, self).update(request, *args, **kwargs)
+        return Response({"message": f"PartNo {part_no_name} successfully updated"})
 
-        serializer = PartNoSerializer(data=body) 
-
-        part_no_name = body.get('part_no')
-
-        if serializer.is_valid():
-            super(PartNoUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"PartNo {part_no_name} successfully updated"})
-
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
-        return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 part_no_update_view = PartNoUpdateAPIView.as_view()
 
