@@ -59,4 +59,5 @@ urlpatterns = [
     path('product/', product.product_list_view,  name='product_list'),
     # path('product/<str:part>/', product.product_detail_view,  name='product_detail'),
     path('product/update_stock1/', product.update_product_stock,  name='product_stock_update'),
+    path('product/search/', product.product_search_view, name='product_search'),
 ]
