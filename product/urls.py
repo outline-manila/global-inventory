@@ -2,7 +2,7 @@ from product.api.rest_brand import BrandDetailAPIView
 from django.urls import path, include
 
 from . import views
-from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit, rest_part_no, rest_job_role
+from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit, rest_part_no, rest_job_role, product
 
 
 urlpatterns = [
@@ -55,4 +55,8 @@ urlpatterns = [
     # path('user/update/<int:pk>', rest_user.user_update_view, name='user_update'),
     # path('user/search/', rest_user.user_search_view, name='user_search'),
 
+    #product
+    path('product/', product.product_list_view,  name='product_list'),
+    # path('product/<str:part>/', product.product_detail_view,  name='product_detail'),
+    path('product/update_stock1/', product.update_product_stock,  name='product_stock_update'),
 ]

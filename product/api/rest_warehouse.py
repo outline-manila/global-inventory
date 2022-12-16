@@ -29,8 +29,8 @@ class WarehouseCreateAPIView(generics.CreateAPIView):
         serializer = WarehouseSerializer(data=body) 
 
         if serializer.is_valid():
-            super(WarehouseUpdateAPIView, self).update(request, *args, **kwargs) 
-            return Response({"message": f"Warehouse {body.get('warehouse')} successfully created"})
+            serializer.save()
+            return Response({"message": f"Unit {body.get('warehouse')} successfully created"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)

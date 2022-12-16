@@ -55,6 +55,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'uuid',
+            'description',
             'warehouse',
             'part',
             'other_part',

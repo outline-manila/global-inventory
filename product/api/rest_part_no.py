@@ -1,7 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from ..models import PartNo
-from ..serializers import PartNoSerializer
+from ..serializers import PartNoSerializer, ProductSerializer
 from django.core.paginator import Paginator
 import json
 from rest_framework.response import Response
@@ -30,13 +30,27 @@ class PartNoCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
+
+        print('---'*100)
+        print('Body:', body)
+        print('---'*100)
+
         serializer = PartNoSerializer(data=body) 
+        product_serializer = ProductSerializer(data=body)
+        is_valid = False
 
         if serializer.is_valid():
+            is_valid = True
             serializer.save()
+
+            if product_serializer.is_valid():
+                product_serializer.save()
             return Response({"message": f"PartNo {body.get('part')} successfully created"})
 
-        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        errors = serializer.errors
+        if is_valid: errors += product_serializer.errors
+
+        error_dict = {error: errors[error][0] for error in errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 part_no_create_view = PartNoCreateAPIView.as_view()
@@ -52,6 +66,9 @@ class PartNoUpdateAPIView(generics.UpdateAPIView):
         body = json.loads(body_unicode)
         part_no_name = body.get('part')
         request.data.update({'updated_at': timezone.now()})
+
+        pk = kwargs['pk']
+
         super(PartNoUpdateAPIView, self).update(request, *args, **kwargs)
         return Response({"message": f"PartNo {part_no_name} successfully updated"})
 
