@@ -22,9 +22,6 @@ class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(~Q(brand='NaN')).all()
     serializer_class = ProductSerializer
     q = Product.objects.filter(part='This is a Simulation').values('remaining_stock').first()
-    print('--'*100)
-    print(q)
-    print('--'*100)
 
 product_list_view = ProductListAPIView.as_view()
 
@@ -88,10 +85,10 @@ def product_search_view(request, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = Product.objects.filter(filter_dict, ~Q(brand='NaN')).all().order_by(sort_by).values()
+        queryset = Product.objects.filter(filter_dict, ~Q(brand='NaN')).all().order_by(sort_by)
 
     else:
-        queryset = Product.objects.filter().all().order_by(sort_by).values()
+        queryset = Product.objects.filter().all().order_by(sort_by)
 
     data = ProductSerializer(queryset, many=True).data
     p = Paginator(data, page_size)
