@@ -25,6 +25,7 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
             'email', 
             'employee_id', 
             'first_name', 
+            'middle_name',
             'last_name', 
             'job_role', 
             'joined_on',
