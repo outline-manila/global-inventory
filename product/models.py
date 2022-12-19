@@ -81,16 +81,30 @@ class Warehouse(models.Model):
     is_active = models.BooleanField(default=True)
 
 
+class Employee(models.Model):
+    uuid = models.UUIDField(default = uuid.uuid4, editable = False)
+    email = models.EmailField(db_index=True, unique=True, max_length=254)
+    first_name = models.CharField(max_length=240)
+    middle_name =  models.CharField(max_length=120)
+    last_name =  models.CharField(max_length=120)
+    employee_id = models.CharField(max_length=120)
+    joined_on = models.DateTimeField(blank=True, null=True)
+    job_role = models.ForeignKey(JobRole, to_field="job_role", db_column="job_role", on_delete=models.DO_NOTHING, null=True)
+    start_date = models.DateTimeField(blank=False, null=False, default=timezone.now, editable=False)
+    end_date = models.DateTimeField(blank=False, null=True)
+    updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
+    created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+
 class Product(models.Model):
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
-    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING, default='NaN')
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING)
     part = models.ForeignKey(PartNo ,related_name="part_number" , to_field="part", db_column="part", on_delete=models.DO_NOTHING, default='NaN')
-    other_part = models.ForeignKey(PartNo ,related_name="other_part_number", to_field="part", db_column="other_part", on_delete=models.DO_NOTHING, default='NaN')
+    other_part = models.ForeignKey(PartNo ,related_name="other_part_number", to_field="part", db_column="other_part", on_delete=models.DO_NOTHING)
     description = models.TextField(blank=True, null=False)
-    brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.DO_NOTHING, default="NaN")
+    brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.DO_NOTHING)
     remaining_stock = models.IntegerField(blank=False, default=0, null=False)
-    unit = models.ForeignKey(Unit ,to_field="unit", db_column="unit", on_delete=models.DO_NOTHING, default="NaN")
-    supplier = models.ForeignKey(Supplier ,to_field="supplier", db_column="supplier", on_delete=models.DO_NOTHING, default="NaN")
+    unit = models.ForeignKey(Unit ,to_field="unit", db_column="unit", on_delete=models.DO_NOTHING)
+    supplier = models.ForeignKey(Supplier ,to_field="supplier", db_column="supplier", on_delete=models.DO_NOTHING)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
 

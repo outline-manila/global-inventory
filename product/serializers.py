@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import JobRole, PartNo, Unit, Supplier, Brand, Warehouse, Product, TransactionHistory
+from .models import JobRole, PartNo, Unit, Supplier, Brand, Warehouse, Product, TransactionHistory, Employee
 from core.models import User
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,6 +14,21 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'last_name', 
             'job_role', 
             'joined_on'
+        )
+
+class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Employee
+        fields = (
+            'id', 
+            'uuid', 
+            'email', 
+            'employee_id', 
+            'first_name', 
+            'last_name', 
+            'job_role', 
+            'joined_on',
+            'start_date',
         )
 
 class JobRoleSerializer(serializers.HyperlinkedModelSerializer):

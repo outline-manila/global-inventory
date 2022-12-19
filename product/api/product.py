@@ -47,27 +47,35 @@ def update_product_stock(request, *args, **kwargs):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
-    strategy = body.get('type')
+    invoice_date = body.get('invoice_date')
+    supplier = body.get('supplier')
     value = body.get('value')
     part = body.get('part')
     queryset = Product.objects.filter(part=part)
 
     if not queryset: return Response({'message': 'part not found'})
 
-
-    if strategy == 'outbound':
-        remaining_stocks = Product.objects.filter(part=part).values('remaining_stock').first()['remaining_stock']
-        if remaining_stocks < value: return Response({'message': 'value larger than stocks'})
-
-        queryset.update(remaining_stock=F('remaining_stock') - value)
-        return Response({'message': f'Remaining stock decreased by {value}'})
-
     queryset.update(remaining_stock=F('remaining_stock') + value)
-    # queryset.remaining_stocks = F('remaining_stock') + value
-
 
     return Response({'message': f'Remaining stocks increased by {value}'})
 
+
+@api_view(['POST'])
+def outbound_product(request, *args, **kwargs):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    value = body.get('value')
+    part = body.get('part')
+    queryset = Product.objects.filter(part=part)
+
+    if not queryset: return Response({'message': 'part not found'})
+
+    remaining_stocks = Product.objects.filter(part=part).values('remaining_stock').first()['remaining_stock']
+    if remaining_stocks < value: return Response({'message': 'value larger than stocks'})
+
+    queryset.update(remaining_stock=F('remaining_stock') - value)
+    return Response({'message': f'Remaining stock decreased by {value}'})
 
 @api_view(['POST'])
 def product_search_view(request, *args, **kwargs):
@@ -101,5 +109,3 @@ def product_search_view(request, *args, **kwargs):
     result['data'] = p.page(current_page).object_list
 
     return Response(result)
-
-

@@ -1,8 +1,16 @@
 from product.api.rest_brand import BrandDetailAPIView
 from django.urls import path, include
 
-from . import views
-from .api import rest_brand, rest_supplier, rest_warehouse, rest_unit, rest_part_no, rest_job_role, product
+from .api import (
+    rest_brand,
+    rest_supplier,
+    rest_warehouse,
+    rest_unit,
+    rest_part_no,
+    rest_job_role,
+    product,
+    rest_employee
+)
 
 
 urlpatterns = [
@@ -61,4 +69,11 @@ urlpatterns = [
     path('inventory/update_stock/', product.update_product_stock,  name='product_stock_update'),
     path('inventory/update/<int:pk>', product.product_update_view, name='product_update'),
     path('inventory/search/', product.product_search_view, name='product_search'),
+
+    # employee
+    path('employee/', rest_employee.employee_list_view,  name='employee_list'),
+    path('employee/<int:pk>/', rest_employee.employee_detail_view,  name='employee-detail'),
+    path('employee/create/', rest_employee.employee_create_view, name='employee_create'),
+    path('employee/update/<int:pk>', rest_employee.employee_update_view, name='employee_update'),
+    path('employee/search/', rest_employee.employee_search_view, name='employee_search'),
 ]
