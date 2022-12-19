@@ -28,8 +28,10 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
             'middle_name',
             'last_name', 
             'job_role', 
-            'joined_on',
+            'warehouse',
+            'remarks',
             'start_date',
+            'end_date'
         )
 
 class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
