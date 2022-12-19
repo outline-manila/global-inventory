@@ -77,12 +77,15 @@ def employee_search_view(request, pk=None, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = Employee.objects.filter(filter_dict).all().order_by(sort_by).values()
+        queryset = Employee.objects.filter(filter_dict).all().order_by(sort_by)
 
     else:
-        queryset = Employee.objects.filter().all().order_by(sort_by).values()
+        queryset = Employee.objects.filter().all().order_by(sort_by)
 
     data = EmployeeSerializer(queryset, many=True).data
+
+    print(data)
+
     p = Paginator(data, page_size)
 
     result = {}

@@ -16,7 +16,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'joined_on'
         )
 
-class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
+class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Employee
         fields = (
@@ -27,11 +27,11 @@ class EmployeeSerializer(serializers.HyperlinkedModelSerializer):
             'first_name', 
             'middle_name',
             'last_name', 
-            'job_role', 
             'warehouse',
             'remarks',
             'start_date',
-            'end_date'
+            'end_date',
+            'job_role',
         )
 
 class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
