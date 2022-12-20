@@ -85,7 +85,7 @@ class Employee(models.Model):
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
     email = models.EmailField(db_index=True, unique=True, max_length=254)
     first_name = models.CharField(max_length=240)
-    middle_name =  models.CharField(max_length=120)
+    middle_name =  models.CharField(max_length=120, blank=True, null=True)
     last_name =  models.CharField(max_length=120)
     employee_id = models.CharField(max_length=120)
     remarks  =  models.CharField(max_length=500, null=True, blank=True)
