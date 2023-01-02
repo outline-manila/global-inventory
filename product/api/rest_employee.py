@@ -70,6 +70,7 @@ def employee_search_view(request, pk=None, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
+    sort_by = _parse_sort(body.get('sortBy'), body.get('sortKey')) or '-updated_at'
     filter_by = body.get('filterBy')
     filter_id = body.get('filterId')
     filter_dict = None
@@ -95,3 +96,25 @@ def employee_search_view(request, pk=None, *args, **kwargs):
     result['data'] = p.page(current_page).object_list
 
     return Response(result)
+
+
+def _parse_sort(sort_by, sort_key):
+    if not (sort_by, sort_key):return 
+    if sort_by not in {'asc', 'desc'}: return
+
+    if sort_by == 'asc': return sort_key
+    return '-'+sort_key
+
+@api_view(['POST'])
+def employee_delete_apiview(request, pk=None, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    delete_ids = body.get('ids')
+
+    for i in delete_ids:
+        employee = Employee.objects.get(pk=i)
+        employee.delete()
+
+    return Response({"message": f"Employees {delete_ids} successfully deleted"})

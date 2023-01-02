@@ -1,13 +1,22 @@
 from django.db import models
 from django.utils import timezone
 import uuid
-from datetime import datetime
+from datetime import date
 
 #TODO VALIDATE REF NO
 def invoice_number():
-    today = datetime.date.today()
+    today = date.today()
     today_string = today.strftime('%y%m%d')
-    last_invoice = TransactionHistory.objects.filter(invoice_id__startswith=today_string).order_by('id').last()
+    last_invoice_outbound = OutboundHistory.objects.filter(invoice_id__startswith=today_string).order_by('id').last()
+    last_invoice_inbound = InboundHistory.objects.filter(invoice_id__startswith=today_string).order_by('id').last()
+
+    # last_invoice = last_invoice_outbound or last_invoice_inbound
+    if last_invoice_outbound != None and last_invoice_inbound != None:
+        last_invoice = max(int(last_invoice_inbound), int(last_invoice_outbound))
+    
+    else:
+        last_invoice = last_invoice_outbound or last_invoice_inbound
+
     if not last_invoice:
         return today_string + "00001"
     
@@ -18,6 +27,18 @@ def invoice_number():
     
     return new_invoice_no
 
+    
+class Brand(models.Model):
+
+    brand = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
+    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
+    updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
+    created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    is_active = models.BooleanField(default=True)
+    end_date = models.DateTimeField(blank=True, null=True, default=None)
+    start_date = models.DateTimeField(blank=True, null=True, default=None)
+
+
 class PartNo(models.Model):
 
     part = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
@@ -27,6 +48,7 @@ class PartNo(models.Model):
     is_active = models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     start_date = models.DateTimeField(blank=True, null=True, default=None)
+    brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.CASCADE)
 
 class Unit(models.Model):
 
@@ -48,15 +70,6 @@ class Supplier(models.Model):
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     start_date = models.DateTimeField(blank=True, null=True, default=None)
 
-class Brand(models.Model):
-
-    brand = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
-    description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
-    updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
-    created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
-    is_active = models.BooleanField(default=True)
-    end_date = models.DateTimeField(blank=True, null=True, default=None)
-    start_date = models.DateTimeField(blank=True, null=True, default=None)
 
 
 class JobRole(models.Model):
@@ -89,8 +102,8 @@ class Employee(models.Model):
     last_name =  models.CharField(max_length=120)
     employee_id = models.CharField(max_length=120)
     remarks  =  models.CharField(max_length=500, null=True, blank=True)
-    warehouse = models.ForeignKey(Warehouse, to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING, null=True)
-    job_role = models.ForeignKey(JobRole, to_field="job_role", db_column="job_role", on_delete=models.DO_NOTHING, null=True)
+    warehouse = models.ForeignKey(Warehouse, to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
+    job_role = models.ForeignKey(JobRole, to_field="job_role", db_column="job_role", on_delete=models.CASCADE, null=True)
     start_date = models.DateTimeField(blank=False, null=False, default=timezone.now, editable=False)
     end_date = models.DateTimeField(blank=False, null=True)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
@@ -98,25 +111,42 @@ class Employee(models.Model):
 
 class Product(models.Model):
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
-    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING)
-    part = models.ForeignKey(PartNo ,related_name="part_number" , to_field="part", db_column="part", on_delete=models.DO_NOTHING, default='NaN')
-    other_part = models.ForeignKey(PartNo ,related_name="other_part_number", to_field="part", db_column="other_part", on_delete=models.DO_NOTHING)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE)
+    part = models.ForeignKey(PartNo ,related_name="part_number" , to_field="part", db_column="part", on_delete=models.CASCADE, default='NaN')
+    other_part = models.ForeignKey(PartNo ,related_name="other_part_number", to_field="part", db_column="other_part", on_delete=models.CASCADE)
     description = models.TextField(blank=True, null=False)
-    brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.DO_NOTHING)
+    brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.CASCADE)
     remaining_stock = models.IntegerField(blank=False, default=0, null=False)
-    unit = models.ForeignKey(Unit ,to_field="unit", db_column="unit", on_delete=models.DO_NOTHING)
-    supplier = models.ForeignKey(Supplier ,to_field="supplier", db_column="supplier", on_delete=models.DO_NOTHING)
+    unit = models.ForeignKey(Unit ,to_field="unit", db_column="unit", on_delete=models.CASCADE)
+    supplier = models.ForeignKey(Supplier ,to_field="supplier", db_column="supplier", on_delete=models.CASCADE)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
 
 
-class TransactionHistory(models.Model):
+class InboundHistory(models.Model):
 
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
     date = models.DateTimeField(blank=False, default=timezone.now, null=False)
     invoice_no = models.CharField(default=invoice_number, max_length=120, null=False)
     action = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    user_id = models.ForeignKey("core.User", on_delete=models.DO_NOTHING)
-    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_t" ,to_field="warehouse", db_column="warehouse", on_delete=models.DO_NOTHING, default='NaN')
-    product_id = models.ForeignKey("Product", on_delete=models.DO_NOTHING)
+    user_id = models.ForeignKey("core.User", on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_i" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, default='NaN')
+    product_id = models.ForeignKey("Product", on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
+    created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+
+
+class OutboundHistory(models.Model):
+
+    uuid = models.UUIDField(default = uuid.uuid4, editable = False)
+    date = models.DateTimeField(blank=False, default=timezone.now, null=False)
+    invoice_no = models.CharField(default=invoice_number, max_length=120, null=False)
+    action = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    user_id = models.ForeignKey("core.User", on_delete=models.CASCADE)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_o" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, default='NaN')
+    product_id = models.ForeignKey("Product", on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
+    created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+

@@ -90,3 +90,17 @@ def unit_search_view(request, pk=None, *args, **kwargs):
     result['data'] = p.page(current_page).object_list
 
     return Response(result)
+
+@api_view(['POST'])
+def unit_delete_apiview(request, pk=None, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    delete_ids = body.get('ids')
+
+    for i in delete_ids:
+        unit = Unit.objects.get(pk=i)
+        unit.delete()
+
+    return Response({"message": f"Units {delete_ids} successfully deleted"})

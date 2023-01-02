@@ -1,5 +1,17 @@
 from rest_framework import serializers
-from .models import JobRole, PartNo, Unit, Supplier, Brand, Warehouse, Product, TransactionHistory, Employee
+from .models import (
+    InboundHistory,
+    JobRole,
+    PartNo,
+    Unit,
+    Supplier,
+    Brand,
+    Warehouse,
+    Product,
+    InboundHistory,
+    Employee,
+    OutboundHistory
+)
 from core.models import User
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -85,9 +97,24 @@ class ProductSerializer(serializers.ModelSerializer):
             'created_at'
         )
 
-class TransactionHistorySerializer(serializers.ModelSerializer):
+class InboundHistorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = TransactionHistory
+        model = InboundHistory
+        fields = (
+            'id',
+            'uuid',
+            'date',
+            'invoice_no',
+            'action',
+            'description',
+            'user_id',
+            'warehouse',
+            'product_id'
+        )
+
+class OutboundHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OutboundHistory
         fields = (
             'id',
             'uuid',

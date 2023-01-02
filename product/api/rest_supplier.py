@@ -89,3 +89,17 @@ def supplier_search_view(request, pk=None, *args, **kwargs):
     result['data'] = p.page(current_page).object_list
 
     return Response(result)
+
+@api_view(['POST'])
+def supplier_delete_apiview(request, pk=None, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    delete_ids = body.get('ids')
+
+    for i in delete_ids:
+        supplier = Supplier.objects.get(pk=i)
+        supplier.delete()
+
+    return Response({"message": f"Supplier {delete_ids} successfully deleted"})

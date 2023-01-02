@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q, F
 
-from ..models import Product
+from ..models import Product, invoice_number, InboundHistory, OutboundHistory
 from ..serializers import ProductSerializer
 
 
@@ -54,7 +54,6 @@ def update_product_stock(request, *args, **kwargs):
     queryset = Product.objects.filter(part=part)
 
     if not queryset: return Response({'message': 'part not found'})
-
     queryset.update(remaining_stock=F('remaining_stock') + value)
 
     return Response({'message': f'Remaining stocks increased by {value}'})
@@ -69,13 +68,22 @@ def outbound_product(request, *args, **kwargs):
     part = body.get('part')
     queryset = Product.objects.filter(part=part)
 
-    if not queryset: return Response({'message': 'part not found'})
+    if not queryset: return Response({'message': 'part not found'}, status=status.HTTP_404_NOT_FOUND)
 
     remaining_stocks = Product.objects.filter(part=part).values('remaining_stock').first()['remaining_stock']
-    if remaining_stocks < value: return Response({'message': 'value larger than stocks'})
-
+    if remaining_stocks < value: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
     queryset.update(remaining_stock=F('remaining_stock') - value)
+
+    invoice_no = invoice_number(OutboundHistory)
+    
+
+
     return Response({'message': f'Remaining stock decreased by {value}'})
+
+def update_outbound_history(body):
+
+    pass
+
 
 @api_view(['POST'])
 def product_search_view(request, *args, **kwargs):

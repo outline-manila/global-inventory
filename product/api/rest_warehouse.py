@@ -30,7 +30,7 @@ class WarehouseCreateAPIView(generics.CreateAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": f"Unit {body.get('warehouse')} successfully created"})
+            return Response({"message": f"Warehouse {body.get('warehouse')} successfully created"})
 
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
@@ -87,3 +87,17 @@ def warehouse_search_view(request, pk=None, *args, **kwargs):
     result['data'] = p.page(current_page).object_list
 
     return Response(result)
+
+@api_view(['POST'])
+def warehouse_delete_apiview(request, pk=None, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    delete_ids = body.get('ids')
+
+    for i in delete_ids:
+        warehouse = Warehouse.objects.get(pk=i)
+        warehouse.delete()
+
+    return Response({"message": f"Warehouse {delete_ids} successfully deleted"})

@@ -1,7 +1,17 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import permission_classes
-from .models import Supplier, JobRole, PartNo, Product, TransactionHistory, Warehouse, Brand, Unit
+from .models import (
+    Supplier,
+    JobRole,
+    PartNo,
+    Product,
+    Warehouse,
+    Brand, 
+    Unit,
+    InboundHistory,
+    OutboundHistory
+    )
 from core.models import User
 from .serializers import (
     SupplierSerializer,
@@ -9,11 +19,12 @@ from .serializers import (
     JobRoleSerializer,
     PartNoSerializer,
     ProductSerializer,
-    TransactionHistorySerializer,
     WarehouseSerializer,
     BrandSerializer,
     UnitSerializer,
-    SupplierSerializer
+    SupplierSerializer,
+    InboundHistorySerializer,
+    OutboundHistorySerializer
 )
 
 # @permission_classes([IsAuthenticated])
@@ -42,9 +53,13 @@ class ProductView(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
 
 # @permission_classes([IsAuthenticated])
-class TransactionHistoryView(viewsets.ModelViewSet):
-    queryset = TransactionHistory.objects.all()
-    serializer_class = TransactionHistorySerializer
+class OutboundHistoryView(viewsets.ModelViewSet):
+    queryset = InboundHistory.objects.all()
+    serializer_class = InboundHistorySerializer
+
+class TraInboundHistoryView(viewsets.ModelViewSet):
+    queryset = OutboundHistory.objects.all()
+    serializer_class = OutboundHistorySerializer
 
 # @permission_classes([IsAuthenticated])
 class WarehouseView(viewsets.ModelViewSet):
