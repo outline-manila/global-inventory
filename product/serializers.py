@@ -54,7 +54,7 @@ class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PartNo
-        fields = ('id', 'part', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
+        fields = ('id', 'part', 'brand', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
 
 class UnitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
