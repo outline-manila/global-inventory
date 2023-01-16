@@ -30,11 +30,6 @@ class PartNoCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-
-        print('---'*100)
-        print('Body:', body)
-        print('---'*100)
-
         serializer = PartNoSerializer(data=body) 
         product_serializer = ProductSerializer(data=body)
         is_valid = False
@@ -42,13 +37,16 @@ class PartNoCreateAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             is_valid = True
             serializer.save()
+            print('hello')
 
             if product_serializer.is_valid():
+                print(' Running ')
                 product_serializer.save()
-            return Response({"message": f"PartNo {body.get('part')} successfully created"})
+                return Response({"message": f"PartNo {body.get('part')} successfully created"})
 
         errors = serializer.errors
-        if is_valid: errors += product_serializer.errors
+        if is_valid: 
+            errors.update(product_serializer.errors)
 
         error_dict = {error: errors[error][0] for error in errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
@@ -87,20 +85,30 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     sort_by = body.get('sortBy') or '-updated_at'
     filter_by = body.get('filterBy')
     filter_id = body.get('filterById')
+    search_key = body.get('searchKey')
     filter_dict = None
 
-    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+    if (filter_by and filter_id) or search_key:
+        filter_dict = {}
+
+        if filter_by and filter_id: filter_dict = filter_dict[filter_by] = filter_id
+        if search_key: filter_dict['part__icontains'] = search_key
 
     if filter_dict:
-        queryset = PartNo.objects.filter(filter_dict).all().order_by(sort_by)
+        queryset = PartNo.objects.filter(**filter_dict).all().order_by(sort_by)
 
     else:
         queryset = PartNo.objects.filter().all().order_by(sort_by)
 
+    result = {}
+    if not (current_page and page_size):
+        result['data'] = queryset.values()
+        return Response(result)
+
     data = PartNoSerializer(queryset, many=True).data
     p = Paginator(data, page_size)
 
-    result = {}
+    
     result['metadata'] = {}
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages

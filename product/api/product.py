@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from django.db.models import Q, F
 
 from ..models import Product, invoice_number, InboundHistory, OutboundHistory
-from ..serializers import ProductSerializer
+from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer
 
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
@@ -48,15 +48,57 @@ def update_product_stock(request, *args, **kwargs):
     body = json.loads(body_unicode)
 
     invoice_date = body.get('invoice_date')
+    unit = body.get('unit')
     supplier = body.get('supplier')
+    warehouse = body.get('warehouse')
     value = body.get('value')
     part = body.get('part')
+    # filter_dict = {}
+
+    # if unit is not None:
+    #     filter_dict['unit'] = unit
+
+    # if warehouse is not None:
+    #     filter_dict['warehouse'] = warehouse
+
+    # if supplier is not None:
+    #     filter_dict['supplier'] = supplier
+
     queryset = Product.objects.filter(part=part)
 
     if not queryset: return Response({'message': 'part not found'})
-    queryset.update(remaining_stock=F('remaining_stock') + value)
+    queryset.update(remaining_stock=F('remaining_stock') + value, supplier=supplier, warehouse=warehouse, unit=unit)
+
+    return update_inbound_history(body)
+
 
     return Response({'message': f'Remaining stocks increased by {value}'})
+
+def update_inbound_history(body):
+    
+    invoice_date = body.get('invoice_date')
+    warehouse = body.get('warehouse')
+    # part = body.get('part')
+    action = 'TODO make action dynamic'
+    product_id = 16
+    user_id = 1
+    data = {}
+    data['product_id'] = product_id
+    data['date']: invoice_date
+    data['invoice_no'] = invoice_number()
+    data['part'] = '2s224'
+    data['warehouse'] = warehouse
+    data['action'] = action
+    data['user_id'] = user_id
+    
+    inbound_serializer = InboundHistorySerializer(data=data)
+
+    if inbound_serializer.is_valid():
+        inbound_serializer.save()
+        return Response({"message": f"Created inbound history with Invoice Number {data['invoice_no']}"})
+
+    error_dict = {error: InboundHistorySerializer.errors[error][0] for error in InboundHistorySerializer.errors}
+    return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 
 @api_view(['POST'])
@@ -74,15 +116,34 @@ def outbound_product(request, *args, **kwargs):
     if remaining_stocks < value: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
     queryset.update(remaining_stock=F('remaining_stock') - value)
 
-    invoice_no = invoice_number(OutboundHistory)
-    
-
+    # invoice_no = invoice_number(OutboundHistory)
 
     return Response({'message': f'Remaining stock decreased by {value}'})
 
 def update_outbound_history(body):
+    invoice_date = body.get('invoice_date')
+    warehouse = body.get('warehouse')
+    # part = body.get('part')
+    action = 'TODO make action dynamic'
+    product_id = 16
+    user_id = 1
+    data = {}
+    data['product_id'] = product_id
+    data['date']: invoice_date
+    data['invoice_no'] = invoice_number()
+    data['part'] = '2s224'
+    data['warehouse'] = warehouse
+    data['action'] = action
+    data['user_id'] = user_id
+    
+    outbound_serializer = OutboundHistorySerializer(data=data)
 
-    pass
+    if outbound_serializer.is_valid():
+        outbound_serializer.save()
+        return Response({"message": f"Outbound successfully created"})
+
+    error_dict = {error: OutboundHistorySerializer.errors[error][0] for error in InboundHistorySerializer.errors}
+    return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 
 @api_view(['POST'])
