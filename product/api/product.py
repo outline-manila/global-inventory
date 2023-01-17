@@ -53,51 +53,41 @@ def update_product_stock(request, *args, **kwargs):
     warehouse = body.get('warehouse')
     value = body.get('value')
     part = body.get('part')
-    # filter_dict = {}
-
-    # if unit is not None:
-    #     filter_dict['unit'] = unit
-
-    # if warehouse is not None:
-    #     filter_dict['warehouse'] = warehouse
-
-    # if supplier is not None:
-    #     filter_dict['supplier'] = supplier
 
     queryset = Product.objects.filter(part=part)
 
     if not queryset: return Response({'message': 'part not found'})
     queryset.update(remaining_stock=F('remaining_stock') + value, supplier=supplier, warehouse=warehouse, unit=unit)
 
-    return update_inbound_history(body)
+    invoice_number =  update_inbound_history(body)
 
-
-    return Response({'message': f'Remaining stocks increased by {value}'})
+    return Response({'message': f'Remaining stocks increased by {value}. Invoice Number: {invoice_number}'})
 
 def update_inbound_history(body):
     
     invoice_date = body.get('invoice_date')
     warehouse = body.get('warehouse')
-    # part = body.get('part')
+    part = body.get('part')
     action = 'TODO make action dynamic'
     product_id = 16
     user_id = 1
     data = {}
-    data['product_id'] = product_id
+    data['product'] = product_id
     data['date']: invoice_date
     data['invoice_no'] = invoice_number()
-    data['part'] = '2s224'
+    data['part'] = part
     data['warehouse'] = warehouse
     data['action'] = action
-    data['user_id'] = user_id
+    data['user'] = user_id
     
     inbound_serializer = InboundHistorySerializer(data=data)
 
     if inbound_serializer.is_valid():
         inbound_serializer.save()
-        return Response({"message": f"Created inbound history with Invoice Number {data['invoice_no']}"})
+        return  data['invoice_no']
 
-    error_dict = {error: InboundHistorySerializer.errors[error][0] for error in InboundHistorySerializer.errors}
+    
+    error_dict = {error: inbound_serializer.errors[error][0] for error in inbound_serializer.errors}
     return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 
@@ -178,3 +168,103 @@ def product_search_view(request, *args, **kwargs):
     result['data'] = p.page(current_page).object_list
 
     return Response(result)
+
+###################### Inbound History ############################
+
+
+class InboundHistoryDetailAPIView(generics.RetrieveAPIView):
+    queryset = InboundHistory.objects.all()
+    serializer_class = InboundHistorySerializer
+    lookup_field = 'pk'
+
+inbound_history_detail_view = InboundHistoryDetailAPIView.as_view()
+
+class InboundHistoryListAPIView(generics.ListAPIView):
+    queryset = InboundHistory.objects.all()
+    serializer_class = InboundHistorySerializer
+
+inbound_history_list_view = InboundHistoryListAPIView.as_view()
+
+class InboundHistoryCreateAPIView(generics.CreateAPIView):
+    queryset = InboundHistory.objects.all()
+    serializer_class = InboundHistorySerializer
+
+    def create(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        serializer = InboundHistorySerializer(data=body) 
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": f"InboundHistory {body.get('inbound_history')} successfully created"})
+
+        error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
+        return Response(error_dict, status=status.HTTP_409_CONFLICT)
+
+inbound_history_create_view = InboundHistoryCreateAPIView.as_view()
+
+class InboundHistoryUpdateAPIView(generics.UpdateAPIView):
+    queryset = InboundHistory.objects.all()
+    serializer_class = InboundHistorySerializer
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        inbound_history_name = body.get('inbound_history')
+        request.data.update({'updated_at': timezone.now()})
+
+        super(InboundHistoryUpdateAPIView, self).update(request, *args, **kwargs) 
+        return Response({"message": f"InboundHistory {inbound_history_name} successfully updated"})
+
+
+inbound_history_update_view = InboundHistoryUpdateAPIView.as_view()
+
+
+@api_view(['POST'])
+def inbound_history_search_view(request, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    current_page = body.get('currentPage') 
+    page_size = body.get('pageSize') 
+    sort_by = body.get('sortBy') or '-updated_at'
+    filter_by = body.get('filterBy')
+    filter_id = body.get('filterById')
+    filter_dict = None
+
+    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+
+    if filter_dict:
+        queryset = InboundHistory.objects.filter(filter_dict).all().order_by(sort_by).values()
+
+    else:
+        queryset = InboundHistory.objects.filter().all().order_by(sort_by).values()
+
+    data = InboundHistorySerializer(queryset, many=True).data
+    p = Paginator(data, page_size)
+
+    result = {}
+    result['metadata'] = {}
+
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
+
+    return Response(result)
+
+
+@api_view(['POST'])
+def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    delete_ids = body.get('ids')
+
+    for i in delete_ids:
+        inbound_history = InboundHistory.objects.get(pk=i)
+        inbound_history.delete()
+
+    return Response({"message": f"InboundHistorys {delete_ids} successfully deleted"})

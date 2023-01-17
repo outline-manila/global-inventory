@@ -83,4 +83,12 @@ urlpatterns = [
     path('employee/update/<int:pk>', rest_employee.employee_update_view, name='employee_update'),
     path('employee/search/', rest_employee.employee_search_view, name='employee_search'),
     path('employee/batch_delete/', rest_employee.employee_delete_apiview, name='employee_batch_delete'),
+
+    # inbound history
+    path('inbound_history/', product.inbound_history_list_view,  name='inbound_history_list'),
+    path('inbound_history/<int:pk>/', product.inbound_history_detail_view,  name='inbound_history-detail'),
+    path('inbound_history/create/', product.inbound_history_create_view, name='inbound_history_create'),
+    path('inbound_history/update/<int:pk>', product.inbound_history_update_view, name='inbound_history_update'),
+    path('inbound_history/search/', product.inbound_history_search_view, name='inbound_history_search'),
+    path('inbound_history/batch_delete/', product.inbound_history_delete_apiview, name='inbound_history_batch_delete'),
 ]
