@@ -109,9 +109,9 @@ class InboundHistorySerializer(serializers.ModelSerializer):
             'invoice_no',
             'action',
             'description',
-            'user',
             'warehouse',
-            'product'
+            'product',
+            'user',
         )
 
 class OutboundHistorySerializer(serializers.ModelSerializer):

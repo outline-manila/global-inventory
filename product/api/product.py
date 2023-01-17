@@ -237,10 +237,10 @@ def inbound_history_search_view(request, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = InboundHistory.objects.filter(filter_dict).all().order_by(sort_by).values()
+        queryset = InboundHistory.objects.filter(filter_dict).all().order_by(sort_by)
 
     else:
-        queryset = InboundHistory.objects.filter().all().order_by(sort_by).values()
+        queryset = InboundHistory.objects.filter().all().order_by(sort_by)
 
     data = InboundHistorySerializer(queryset, many=True).data
     p = Paginator(data, page_size)
