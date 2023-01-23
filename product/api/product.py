@@ -11,6 +11,24 @@ from ..models import Product, invoice_number, InboundHistory, OutboundHistory
 from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer
 
 
+def generate_action(parts: list, action):
+
+    part_string = ''
+
+    if not parts:
+        part_string = ''
+    elif len(parts) == 1:
+        part_string = f'Part Number {str(parts[0])}'
+    elif len(parts) == 2:
+       part_string =  f"Part Numbers {parts[0]} and {parts[1]}"
+    else:
+        last_element = str(parts.pop())
+        part_string =  f"Part Numbers {', '.join(map(str, parts))}, and {last_element}"
+
+    action_string = f'{action} {part_string}'
+
+    return action_string
+
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -48,35 +66,44 @@ def update_product_stock(request, *args, **kwargs):
     body = json.loads(body_unicode)
 
     invoice_date = body.get('invoice_date')
-    unit = body.get('unit')
     supplier = body.get('supplier')
     warehouse = body.get('warehouse')
-    value = body.get('value')
-    part = body.get('part')
+    parts = body.get('product')
 
-    queryset = Product.objects.filter(part=part)
+    part_list = [ part['part'] for part in parts ]
+    for part in parts:
+        inbound_dict = {}
+        inbound_dict['unit'] = part.get('unit')
+        inbound_dict['part'] = part.get('part')
+        inbound_dict['supplier'] = supplier
+        inbound_dict['warehouse'] = warehouse
+        quantity = part.get('quantity')
 
-    if not queryset: return Response({'message': 'part not found'})
-    queryset.update(remaining_stock=F('remaining_stock') + value, supplier=supplier, warehouse=warehouse, unit=unit)
 
-    invoice_number =  update_inbound_history(body)
+        queryset = Product.objects.filter(part=part)
 
-    return Response({'message': f'Remaining stocks increased by {value}. Invoice Number: {invoice_number}'})
+        queryset.update(remaining_stock=F('remaining_stock') + quantity, **inbound_dict)
+
+    reference_number =  update_inbound_history(body)
+
+    return Response({'message': f'Remaining stocks increased in {part_list}. Invoice Number: {reference_number}'})
 
 def update_inbound_history(body):
-    
+
+    products = body.get('product')
+
+    parts = [ product['part'] for product in products ]
+
+    action = generate_action(parts, 'Added stock in')
     invoice_date = body.get('invoice_date')
-    warehouse = body.get('warehouse')
-    part = body.get('part')
-    action = 'TODO make action dynamic'
     product_id = 16
     user_id = 1
+
     data = {}
+    data['description'] = 'Add'
     data['product'] = product_id
     data['date']: invoice_date
     data['invoice_no'] = invoice_number()
-    data['part'] = part
-    data['warehouse'] = warehouse
     data['action'] = action
     data['user'] = user_id
     
@@ -113,7 +140,6 @@ def outbound_product(request, *args, **kwargs):
 def update_outbound_history(body):
     invoice_date = body.get('invoice_date')
     warehouse = body.get('warehouse')
-    # part = body.get('part')
     action = 'TODO make action dynamic'
     product_id = 16
     user_id = 1

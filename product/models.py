@@ -127,25 +127,28 @@ class InboundHistory(models.Model):
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
     date = models.DateTimeField(blank=False, default=timezone.now, null=False)
     invoice_no = models.CharField(default=invoice_number, max_length=120, null=False)
+    reference_no = models.TextField(blank=True, null=True)
     action = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     user = models.ForeignKey("core.User", on_delete=models.CASCADE, null=True)
-    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_i" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, default='NaN')
     product = models.ForeignKey("Product", on_delete=models.CASCADE, null=True)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_i" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
 
 
 class OutboundHistory(models.Model):
+    
 
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
     date = models.DateTimeField(blank=False, default=timezone.now, null=False)
     invoice_no = models.CharField(default=invoice_number, max_length=120, null=False)
     action = models.TextField(blank=True, null=True)
+    reference_no = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     user = models.ForeignKey("core.User", on_delete=models.CASCADE)
-    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_o" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, default='NaN')
     product = models.ForeignKey("Product", on_delete=models.CASCADE)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_o" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
 
