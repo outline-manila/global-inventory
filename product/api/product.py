@@ -79,10 +79,8 @@ def update_product_stock(request, *args, **kwargs):
         inbound_dict['warehouse'] = warehouse
         quantity = part.get('quantity')
 
-
-        queryset = Product.objects.filter(part=part)
-
-        queryset.update(remaining_stock=F('remaining_stock') + quantity, **inbound_dict)
+        queryset = Product.objects.filter(part=part.get('part'))
+        queryset.update(remaining_stock=F('remaining_stock') + quantity)
 
     reference_number =  update_inbound_history(body)
 
