@@ -118,46 +118,59 @@ def update_inbound_history(body):
 
 @api_view(['POST'])
 def outbound_product(request, *args, **kwargs):
+
+
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
-    value = body.get('value')
-    part = body.get('part')
-    queryset = Product.objects.filter(part=part)
+    parts = body.get('product')
 
-    if not queryset: return Response({'message': 'part not found'}, status=status.HTTP_404_NOT_FOUND)
+    part_list = [ part['part'] for part in parts ]
+    for part_item in parts:
+        inbound_dict = {}
+        part = part_item.get('part')
+        inbound_dict['part'] = part
+        quantity = part_item.get('quantity')
 
-    remaining_stocks = Product.objects.filter(part=part).values('remaining_stock').first()['remaining_stock']
-    if remaining_stocks < value: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
-    queryset.update(remaining_stock=F('remaining_stock') - value)
+        queryset = Product.objects.filter(part=part)
+        print(queryset)
+        if not queryset: return Response({'message': 'part not found'}, status=status.HTTP_404_NOT_FOUND)
+        remaining_stocks = Product.objects.filter(part=part).values('remaining_stock').first()['remaining_stock']
+        if remaining_stocks < quantity: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
+        queryset.update(remaining_stock=F('remaining_stock') - quantity)
 
-    # invoice_no = invoice_number(OutboundHistory)
+    reference_number =  update_outbound_history(body)
 
-    return Response({'message': f'Remaining stock decreased by {value}'})
+    return Response({'message': f'Remaining stocks decreased in {part_list}. Invoice Number: {reference_number}'})
 
 def update_outbound_history(body):
+
+    products = body.get('product')
+
+    parts = [ product['part'] for product in products ]
+
+    action = generate_action(parts, 'Added stock in')
     invoice_date = body.get('invoice_date')
-    warehouse = body.get('warehouse')
-    action = 'TODO make action dynamic'
     product_id = 16
     user_id = 1
+
     data = {}
-    data['product_id'] = product_id
+    data['description'] = 'Checkout'
+    data['product'] = product_id
     data['date']: invoice_date
-    data['invoice_no'] = invoice_number()
-    data['part'] = '2s224'
-    data['warehouse'] = warehouse
     data['action'] = action
-    data['user_id'] = user_id
+    data['user'] = user_id
     
     outbound_serializer = OutboundHistorySerializer(data=data)
 
     if outbound_serializer.is_valid():
         outbound_serializer.save()
         return Response({"message": f"Outbound successfully created"})
-
+    
     error_dict = {error: OutboundHistorySerializer.errors[error][0] for error in InboundHistorySerializer.errors}
     return Response(error_dict, status=status.HTTP_409_CONFLICT)
+
+##
 
 
 @api_view(['POST'])
@@ -292,3 +305,7 @@ def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
         inbound_history.delete()
 
     return Response({"message": f"InboundHistorys {delete_ids} successfully deleted"})
+
+
+
+    ###########

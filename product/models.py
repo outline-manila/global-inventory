@@ -11,7 +11,7 @@ def invoice_number():
     last_invoice_inbound = InboundHistory.objects.filter(invoice_no__startswith=today_string).order_by('-id').first()
     # last_invoice = last_invoice_outbound or last_invoice_inbound
 
-    if last_invoice_outbound != None and last_invoice_inbound != None:
+    if (last_invoice_outbound != None and last_invoice_inbound != None) and False:
         last_invoice = max(int(last_invoice_inbound), int(last_invoice_outbound))
     
     else:
@@ -146,8 +146,8 @@ class OutboundHistory(models.Model):
     action = models.TextField(blank=True, null=True)
     reference_no = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
-    user = models.ForeignKey("core.User", on_delete=models.CASCADE)
-    product = models.ForeignKey("Product", on_delete=models.CASCADE)
+    user = models.ForeignKey("core.User", on_delete=models.CASCADE, null=True)
+    product = models.ForeignKey("Product", on_delete=models.CASCADE, null=True)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_o" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
