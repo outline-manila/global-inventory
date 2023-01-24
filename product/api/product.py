@@ -270,7 +270,12 @@ def inbound_history_search_view(request, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
-    filter_by = f"{body.get('filterBy')}__contains"
+    if body.get('filterBy'):
+        if body.get('filterBy') == 'user':
+            filter_by = f"{body.get('filterBy')}"
+        else:
+            filter_by = f"{body.get('filterBy')}__contains"
+
     filter_id = body.get('filterId')
     filter_dict = None
 
