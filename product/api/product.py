@@ -273,7 +273,8 @@ def inbound_history_search_view(request, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
-    if body.get('filterBy'):
+    filter_by = body.get('filterBy')
+    if filter_by:
         if body.get('filterBy') == 'user':
             filter_by = f"{body.get('filterBy')}"
         else:
@@ -318,7 +319,45 @@ def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
 
     return Response({"message": f"InboundHistorys {delete_ids} successfully deleted"})
 
+@api_view(['POST'])
+def outbound_history_search_view(request, *args, **kwargs):
 
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    current_page = body.get('currentPage') 
+    page_size = body.get('pageSize') 
+    sort_by = body.get('sortBy') or '-updated_at'
+    filter_by = body.get('filterBy')
+    if filter_by:
+        if body.get('filterBy') == 'user':
+            filter_by = f"{body.get('filterBy')}"
+        else:
+            filter_by = f"{body.get('filterBy')}__contains"
+
+    filter_id = body.get('filterId')
+    filter_dict = None
+
+    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+
+    if filter_dict:
+        print(filter_dict)
+        queryset = OutboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
+
+    else:
+        queryset = OutboundHistory.objects.filter().all().order_by(sort_by)
+
+    data = OutboundHistorySerializer(queryset, many=True).data
+    p = Paginator(data, page_size)
+
+    result = {}
+    result['metadata'] = {}
+
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
+
+    return Response(result)
 
 
 

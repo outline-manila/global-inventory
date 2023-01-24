@@ -91,5 +91,6 @@ urlpatterns = [
     path('inbound_history/create/', product.inbound_history_create_view, name='inbound_history_create'),
     path('inbound_history/update/<int:pk>', product.inbound_history_update_view, name='inbound_history_update'),
     path('inbound_history/search/', product.inbound_history_search_view, name='inbound_history_search'),
-    # path('inbound_history/batch_delete/', product.inbound_history_delete_apiview, name='inbound_history_batch_delete'),
+    path('outbound_history/search/', product.outbound_history_search_view, name='inbound_history_search'),
+    path('inbound_history/batch_delete/', product.inbound_history_delete_apiview, name='inbound_history_batch_delete'),
 ]
