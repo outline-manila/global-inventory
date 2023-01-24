@@ -98,7 +98,7 @@ class ProductSerializer(serializers.ModelSerializer):
         )
 
 class InboundHistorySerializer(serializers.ModelSerializer):
-    product = serializers.PrimaryKeyRelatedField(queryset= Product.objects.all())
+    # product = serializers.PrimaryKeyRelatedField(queryset= Product.objects.all())
     user = serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
     class Meta:
         model = InboundHistory
@@ -110,7 +110,6 @@ class InboundHistorySerializer(serializers.ModelSerializer):
             'action',
             'description',
             'warehouse',
-            'product',
             'user',
         )
 
@@ -126,6 +125,5 @@ class OutboundHistorySerializer(serializers.ModelSerializer):
             'description',
             'user_id',
             'warehouse',
-            'product_id'
         )
 

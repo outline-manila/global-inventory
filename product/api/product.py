@@ -83,6 +83,7 @@ def update_product_stock(request, *args, **kwargs):
         queryset.update(remaining_stock=F('remaining_stock') + quantity)
 
     reference_number =  update_inbound_history(body)
+    # return reference_number
 
     return Response({'message': f'Remaining stocks increased in {part_list}. Invoice Number: {reference_number}'})
 
@@ -91,17 +92,16 @@ def update_inbound_history(body):
     products = body.get('product')
 
     parts = [ product['part'] for product in products ]
-
     action = generate_action(parts, 'Added stock in')
     invoice_date = body.get('invoice_date')
-    product_id = 16
+    # product_id = 
     user_id = 1
 
     data = {}
     data['description'] = 'Add'
-    data['product'] = product_id
+    # data['product'] = product_id
     data['date']: invoice_date
-    data['invoice_no'] = invoice_number()
+    data['invoice_no'] = body.get('invoice_number')
     data['action'] = action
     data['user'] = user_id
     
@@ -307,5 +307,4 @@ def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
     return Response({"message": f"InboundHistorys {delete_ids} successfully deleted"})
 
 
-
-    ###########
+    
