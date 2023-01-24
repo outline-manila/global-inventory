@@ -114,6 +114,7 @@ class InboundHistorySerializer(serializers.ModelSerializer):
         )
 
 class OutboundHistorySerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
     class Meta:
         model = OutboundHistory
         fields = (
@@ -123,7 +124,7 @@ class OutboundHistorySerializer(serializers.ModelSerializer):
             'invoice_no',
             'action',
             'description',
-            'user_id',
+            'user',
             'warehouse',
         )
 

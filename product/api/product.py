@@ -144,6 +144,8 @@ def outbound_product(request, *args, **kwargs):
 
     reference_number =  update_outbound_history(body)
 
+    print(reference_number)
+
     return Response({'message': f'Remaining stocks decreased in {part_list}. Invoice Number: {reference_number}'})
 
 def update_outbound_history(body):
@@ -152,17 +154,17 @@ def update_outbound_history(body):
 
     parts = [ product['part'] for product in products ]
 
-    action = generate_action(parts, 'Added stock in')
+    action = generate_action(parts, 'Decreased stock in')
     invoice_date = body.get('invoice_date')
-    product_id = 16
-    user_id = 1
+    user_id = body.get('user_id')
+    warehouse = body.get('warehouse')
 
     data = {}
     data['description'] = 'Checkout'
-    data['product'] = product_id
     data['date']: invoice_date
     data['action'] = action
     data['user'] = user_id
+    data['warehouse'] = warehouse
     
     outbound_serializer = OutboundHistorySerializer(data=data)
 
@@ -170,7 +172,8 @@ def update_outbound_history(body):
         outbound_serializer.save()
         return Response({"message": f"Outbound successfully created"})
     
-    error_dict = {error: OutboundHistorySerializer.errors[error][0] for error in InboundHistorySerializer.errors}
+    error_dict = {error: outbound_serializer.errors[error][0] for error in outbound_serializer.errors}
+    print('ERROR', error_dict)
     return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 ##
@@ -314,6 +317,9 @@ def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
         inbound_history.delete()
 
     return Response({"message": f"InboundHistorys {delete_ids} successfully deleted"})
+
+
+
 
 
     
