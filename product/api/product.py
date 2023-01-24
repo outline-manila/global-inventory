@@ -83,7 +83,7 @@ def update_product_stock(request, *args, **kwargs):
         queryset.update(remaining_stock=F('remaining_stock') + quantity)
 
     reference_number =  update_inbound_history(body)
-    return reference_number
+    # return reference_number
 
     return Response({'message': f'Remaining stocks increased in {part_list}. Invoice Number: {reference_number}'})
 
