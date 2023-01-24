@@ -83,7 +83,7 @@ def update_product_stock(request, *args, **kwargs):
         queryset.update(remaining_stock=F('remaining_stock') + quantity)
 
     reference_number =  update_inbound_history(body)
-    # return reference_number
+    return reference_number
 
     return Response({'message': f'Remaining stocks increased in {part_list}. Invoice Number: {reference_number}'})
 
@@ -113,6 +113,9 @@ def update_inbound_history(body):
 
     
     error_dict = {error: inbound_serializer.errors[error][0] for error in inbound_serializer.errors}
+
+    print(error_dict)
+
     return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 
