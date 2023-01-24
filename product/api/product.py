@@ -101,7 +101,7 @@ def update_inbound_history(body):
     data['description'] = 'Add'
     # data['product'] = product_id
     data['date']: invoice_date
-    data['invoice_no'] = body.get('invoice_number')
+    data['invoice_no'] = body.get('invoice_no')
     data['action'] = action
     data['user'] = user_id
     
