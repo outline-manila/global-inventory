@@ -97,8 +97,17 @@ class ProductSerializer(serializers.ModelSerializer):
             'created_at'
         )
 
+class UserSerializerTransaction(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            'first_name', 
+            'last_name'
+        )
+
 class InboundHistorySerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
+    # user = serializers.PrimaryKeyRelatedField(queryset=User.objects.values('email'))
+    user = UserSerializerTransaction()
     class Meta:
         model = InboundHistory
         fields = (
