@@ -92,14 +92,13 @@ def update_inbound_history(body):
     products = body.get('product')
 
     parts = [ product['part'] for product in products ]
-    action = generate_action(parts, 'Added stock in')
+    action = generate_action(parts, 'Added ')
     invoice_date = body.get('invoice_date')
     # product_id = 
     user_id = 1
 
     data = {}
     data['description'] = 'Add'
-    # data['product'] = product_id
     data['date']: invoice_date
     data['invoice_no'] = body.get('invoice_no')
     data['action'] = action

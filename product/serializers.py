@@ -122,7 +122,7 @@ class InboundHistorySerializer(serializers.ModelSerializer):
         )
 
 class OutboundHistorySerializer(serializers.ModelSerializer):
-    user = serializers.PrimaryKeyRelatedField(queryset= User.objects.all())
+    user = UserSerializerTransaction()
     class Meta:
         model = OutboundHistory
         fields = (
