@@ -75,7 +75,7 @@ def unit_search_view(request, pk=None, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = Unit.objects.filter(filter_dict).all().order_by(sort_by).values()
+        queryset = Unit.objects.filter(**filter_dict).all().order_by(sort_by).values()
 
     else:
         queryset = Unit.objects.filter().all().order_by(sort_by).values()

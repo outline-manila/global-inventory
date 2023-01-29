@@ -52,7 +52,7 @@ def job_role_search_view(request, pk=None, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = JobRole.objects.filter(filter_dict).all().order_by(sort_by).values()
+        queryset = JobRole.objects.filter(**filter_dict).all().order_by(sort_by).values()
 
     else:
         queryset = JobRole.objects.filter().all().order_by(sort_by).values()

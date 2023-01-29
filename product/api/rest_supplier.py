@@ -74,7 +74,7 @@ def supplier_search_view(request, pk=None, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = Supplier.objects.filter(filter_dict).all().order_by(sort_by).values()
+        queryset = Supplier.objects.filter(**filter_dict).all().order_by(sort_by).values()
 
     else:
         queryset = Supplier.objects.filter().all().order_by(sort_by).values()

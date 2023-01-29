@@ -77,7 +77,7 @@ def brand_search_view(request, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = Brand.objects.filter(filter_dict).all().order_by(sort_by).values()
+        queryset = Brand.objects.filter(**filter_dict).all().order_by(sort_by).values()
 
     else:
         queryset = Brand.objects.filter().all().order_by(sort_by).values()
