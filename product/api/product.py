@@ -94,15 +94,15 @@ def update_inbound_history(body):
     parts = [ product['part'] for product in products ]
     action = generate_action(parts, 'Added ')
     invoice_date = body.get('invoice_date')
-    # product_id = 
-    user_id = 1
 
     data = {}
     data['description'] = 'Add'
     data['date']: invoice_date
     data['invoice_no'] = body.get('invoice_no')
     data['action'] = action
-    data['user'] = user_id
+    data['user'] = body.get('user_id')
+    data['warehouse'] = body.get('warehouse')
+    data['supplier'] = body.get('supplier')
     
     inbound_serializer = InboundHistorySerializer(data=data)
 
@@ -113,7 +113,6 @@ def update_inbound_history(body):
     
     error_dict = {error: inbound_serializer.errors[error][0] for error in inbound_serializer.errors}
 
-    print(error_dict)
 
     return Response(error_dict, status=status.HTTP_409_CONFLICT)
 

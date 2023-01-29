@@ -117,6 +117,7 @@ class InboundHistorySerializer(serializers.ModelSerializer):
             'invoice_no',
             'action',
             'description',
+            'supplier',
             'warehouse',
             'user'
         )
