@@ -18,17 +18,20 @@ def post_create_user(request):
     body = json.loads(body_unicode)
 
     is_super_user = body.get('is_superuser', None)
+    is_super_user = True
     email = body['email']
     first_name = body['first_name']
     last_name = body['last_name']
+    middle_name = body.get('middle_name')
     password = body.get('password')
+    employee_id = body.get('employee_id')
 
     # custom_user_service = User()
 
     print(body)
 
     if is_super_user:
-        user = User.objects.create_superuser(email, first_name, last_name, password)
+        user = User.objects.create_superuser(email, first_name, middle_name, last_name, password, employee_id)
     
     else:
         user = User.objects.create_user(email, first_name, last_name, password)

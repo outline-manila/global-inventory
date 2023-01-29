@@ -18,12 +18,12 @@ def generate_action(parts: list, action):
     if not parts:
         part_string = ''
     elif len(parts) == 1:
-        part_string = f'Part Number {str(parts[0])}'
+        part_string = f'Part {str(parts[0])}'
     elif len(parts) == 2:
-       part_string =  f"Part Numbers {parts[0]} and {parts[1]}"
+       part_string =  f"Parts {parts[0]} and {parts[1]}"
     else:
         last_element = str(parts.pop())
-        part_string =  f"Part Numbers {', '.join(map(str, parts))}, and {last_element}"
+        part_string =  f"Parts {', '.join(map(str, parts))}, and {last_element}"
 
     action_string = f'{action} {part_string}'
 
@@ -155,7 +155,7 @@ def update_outbound_history(body):
 
     parts = [ product['part'] for product in products ]
 
-    action = generate_action(parts, 'Decreased stock in')
+    action = generate_action(parts, 'Decreased')
     invoice_date = body.get('invoice_date')
     user_id = body.get('user_id')
     warehouse = body.get('warehouse_from')
@@ -297,6 +297,9 @@ def inbound_history_search_view(request, *args, **kwargs):
         queryset = InboundHistory.objects.filter().all().order_by(sort_by)
 
     data = InboundHistorySerializer(queryset, many=True).data
+
+    # print(f"Hello {data}")
+
     p = Paginator(data, page_size)
 
     result = {}
