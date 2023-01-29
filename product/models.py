@@ -135,7 +135,7 @@ class InboundHistory(models.Model):
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_i" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
-
+    supplier = models.ForeignKey(Supplier, related_name="supplier_i", to_field="supplier", db_column="supplier", on_delete=models.CASCADE, null=True)
 
 class OutboundHistory(models.Model):
     
