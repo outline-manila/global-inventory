@@ -1,5 +1,4 @@
 import jwt
-# from simplejwt import AccessToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 import json
 
