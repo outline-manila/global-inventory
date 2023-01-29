@@ -42,6 +42,7 @@ class PartNo(models.Model):
 
     part = models.CharField(max_length=125, null=False, blank=False, unique=True, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
+    other_part_no = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
