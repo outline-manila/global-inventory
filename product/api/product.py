@@ -198,7 +198,7 @@ def product_search_view(request, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
-        queryset = Product.objects.filter(filter_dict, ~Q(brand='NaN')).all().order_by(sort_by)
+        queryset = Product.objects.filter(**filter_dict, ~Q(brand='NaN')).all().order_by(sort_by)
 
     else:
         queryset = Product.objects.filter().all().order_by(sort_by)
