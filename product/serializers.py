@@ -126,5 +126,7 @@ class OutboundHistorySerializer(serializers.ModelSerializer):
             'description',
             'user',
             'warehouse',
+            'warehouse_to',
+            'remarks',
         )
 

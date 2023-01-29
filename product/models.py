@@ -148,7 +148,9 @@ class OutboundHistory(models.Model):
     description = models.TextField(blank=True, null=True)
     user = models.ForeignKey("core.User", on_delete=models.CASCADE, null=True)
     product = models.ForeignKey("Product", on_delete=models.CASCADE, null=True, default=None)
+    remarks = models.TextField(blank=True, null=True)
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
+    warehouse_to = models.ForeignKey(Warehouse, related_name="warehouse_name_to" ,to_field="warehouse", db_column="warehouse_to", on_delete=models.CASCADE, null=True)
     warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name_o" ,to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
 

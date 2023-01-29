@@ -158,7 +158,9 @@ def update_outbound_history(body):
     action = generate_action(parts, 'Decreased stock in')
     invoice_date = body.get('invoice_date')
     user_id = body.get('user_id')
-    warehouse = body.get('warehouse')
+    warehouse = body.get('warehouse_from')
+    warehouse_to = body.get('warehouse_to')
+    remarks = body.get('remarks')
 
     data = {}
     data['description'] = 'Checkout'
@@ -166,6 +168,8 @@ def update_outbound_history(body):
     data['action'] = action
     data['user'] = user_id
     data['warehouse'] = warehouse
+    data['warehouse_to'] = warehouse_to
+    data['remarks'] = remarks
     
     outbound_serializer = OutboundHistorySerializer(data=data)
 
@@ -174,7 +178,6 @@ def update_outbound_history(body):
         return Response({"message": f"Outbound successfully created"})
     
     error_dict = {error: outbound_serializer.errors[error][0] for error in outbound_serializer.errors}
-    print('ERROR', error_dict)
     return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
 ##

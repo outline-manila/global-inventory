@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
+import jwt
+
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -52,6 +54,13 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 
 user_update_view = UserUpdateAPIView.as_view()
 
+@api_view(['POST'])
+def user_detail_by_token(request, *args, **kwargs):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+
+    
 
 @api_view(['POST'])
 def user_search_view(request, pk=None, *args, **kwargs):
