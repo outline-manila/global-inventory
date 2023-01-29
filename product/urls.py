@@ -9,7 +9,8 @@ from .api import (
     rest_part_no,
     rest_job_role,
     product,
-    rest_employee
+    rest_employee,
+    get_user_by_token
 )
 
 
@@ -63,7 +64,8 @@ urlpatterns = [
     path('part/batch_delete/', rest_part_no.part_delete_apiview, name='part_no_delete'),
 
     # # user
-    # path('user/', rest_user.user_list_view,  name='user_list'),
+    path('user/token/', get_user_by_token.get_user_by_token,  name='user_token'),
+        # path('user/', rest_user.user_list_view,  name='user_list'),
     # path('user/<int:pk>/', rest_user.user_detail_view,  name='user-detail'),
     # path('user/create/', rest_user.user_create_view, name='user_create'),
     # path('user/update/<int:pk>', rest_user.user_update_view, name='user_update'),
