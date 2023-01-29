@@ -9,7 +9,7 @@ from django.db.models import Q, F
 from itertools import chain
 from ..models import Product, invoice_number, InboundHistory, OutboundHistory
 from core.models import User
-from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer
+from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer, InboundHistoryCreateSerializer, OutboundHistoryCreateSerializer
 
 
 def generate_action(parts: list, action):
@@ -105,13 +105,13 @@ def update_inbound_history(body):
     data['warehouse'] = body.get('warehouse')
     data['supplier'] = body.get('supplier')
     
-    inbound_serializer = InboundHistorySerializer(data=data)
+    inbound_serializer = InboundHistoryCreateSerializer(data=data)
 
     if inbound_serializer.is_valid():
         inbound_serializer.save()
         return  data['invoice_no']
 
-    
+    print(inbound_serializer.errors)
     error_dict = {error: inbound_serializer.errors[error][0] for error in inbound_serializer.errors}
 
 
@@ -170,7 +170,7 @@ def update_outbound_history(body):
     data['warehouse_to'] = warehouse_to
     data['remarks'] = remarks
     
-    outbound_serializer = OutboundHistorySerializer(data=data)
+    outbound_serializer = OutboundHistoryCreateSerializer(data=data)
 
     if outbound_serializer.is_valid():
         outbound_serializer.save()

@@ -122,6 +122,23 @@ class InboundHistorySerializer(serializers.ModelSerializer):
             'user'
         )
 
+class InboundHistoryCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    class Meta:
+        model = InboundHistory
+        fields = (
+            'id',
+            'uuid',
+            'date',
+            'invoice_no',
+            'action',
+            'description',
+            'supplier',
+            'warehouse',
+            'user'
+        )
+
 class OutboundHistorySerializer(serializers.ModelSerializer):
     user = UserSerializerTransaction()
     class Meta:
@@ -139,3 +156,19 @@ class OutboundHistorySerializer(serializers.ModelSerializer):
             'remarks',
         )
 
+class OutboundHistoryCreateSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    class Meta:
+        model = OutboundHistory
+        fields = (
+            'id',
+            'uuid',
+            'date',
+            'invoice_no',
+            'action',
+            'description',
+            'user',
+            'warehouse',
+            'warehouse_to',
+            'remarks',
+        )
