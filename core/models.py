@@ -40,10 +40,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     uuid = models.UUIDField(default = uuid.uuid4, editable = False)
     email = models.EmailField(db_index=True, unique=True, max_length=254)
     first_name = models.CharField(max_length=240)
-    middle_name =  models.CharField(max_length=120)
+    middle_name =  models.CharField(max_length=120, blank=True, null=True)
     last_name =  models.CharField(max_length=120)
     password = models.CharField(max_length=120)
-    employee_id = models.CharField(max_length=120)
+    employee_id = models.CharField(max_length=120,  blank=True, null=True)
     joined_on = models.DateTimeField(blank=True, null=True)
     job_role = models.ForeignKey(JobRole, to_field="job_role", db_column="job_role", on_delete=models.DO_NOTHING, null=True)
 
