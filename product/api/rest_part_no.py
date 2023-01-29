@@ -84,7 +84,7 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
     filter_by = body.get('filterBy')
-    filter_id = body.get('filterById')
+    filter_id = body.get('filterId')
     search_key = body.get('searchKey')
     filter_dict = None
 
