@@ -28,8 +28,6 @@ def post_create_user(request):
 
     # custom_user_service = User()
 
-    print(body)
-
     if is_super_user:
         user = User.objects.create_superuser(email, first_name, middle_name, last_name, password, employee_id)
     
