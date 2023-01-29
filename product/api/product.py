@@ -6,8 +6,9 @@ from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q, F
-
+from itertools import chain
 from ..models import Product, invoice_number, InboundHistory, OutboundHistory
+from core.models import User
 from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer
 
 
@@ -279,19 +280,25 @@ def inbound_history_search_view(request, *args, **kwargs):
     if filter_by:
         if body.get('filterBy') == 'user':
             filter_by = f"{body.get('filterBy')}"
+            filter_id = body.get('filterId')
+            user_id_first = User.objects.filter(first_name__contains=filter_id).values('id')
+            user_id_last = User.objects.filter(last_name__contains=filter_id).values('id')
+            user_id_list = list(chain(user_id_first,user_id_last))
+            user_id_list = list(set([item for d in user_id_list for item in d.values()]))
+            queryset = InboundHistory.objects.filter(user__in=user_id_list).all().order_by(sort_by)
         else:
             filter_by = f"{body.get('filterBy')}__contains"
+            filter_id = body.get('filterId')
 
-    filter_id = body.get('filterId')
     filter_dict = None
 
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
-    if filter_dict:
+    if filter_dict and filter_by != 'user':
         print(filter_dict)
         queryset = InboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
 
-    else:
+    if not filter_dict:
         queryset = InboundHistory.objects.filter().all().order_by(sort_by)
 
     data = InboundHistorySerializer(queryset, many=True).data
