@@ -195,7 +195,7 @@ def product_search_view(request, *args, **kwargs):
     filter_id = body.get('filterId')
     filter_dict = None
 
-    if filter_by and filter_id: filter_dict = {f'{filter_by}__contains': filter_id}
+    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict:
         queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
