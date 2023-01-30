@@ -195,7 +195,7 @@ def product_search_view(request, *args, **kwargs):
     filter_id = body.get('filterId')
     filter_dict = None
 
-    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+    if filter_by and filter_id: filter_dict = {f'{filter_by}__contains': filter_id}
 
     if filter_dict:
         queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
@@ -295,7 +295,6 @@ def inbound_history_search_view(request, *args, **kwargs):
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
     if filter_dict and filter_by != 'user':
-        print(filter_dict)
         queryset = InboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
 
     if not filter_dict:
@@ -344,19 +343,24 @@ def outbound_history_search_view(request, *args, **kwargs):
     if filter_by:
         if body.get('filterBy') == 'user':
             filter_by = f"{body.get('filterBy')}"
+            filter_id = body.get('filterId')
+            user_id_first = User.objects.filter(first_name__contains=filter_id).values('id')
+            user_id_last = User.objects.filter(last_name__contains=filter_id).values('id')
+            user_id_list = list(chain(user_id_first,user_id_last))
+            user_id_list = list(set([item for d in user_id_list for item in d.values()]))
+            queryset = OutboundHistory.objects.filter(user__in=user_id_list).all().order_by(sort_by)
         else:
             filter_by = f"{body.get('filterBy')}__contains"
+            filter_id = body.get('filterId')
 
-    filter_id = body.get('filterId')
     filter_dict = None
 
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
 
-    if filter_dict:
-        print(filter_dict)
+    if filter_dict and filter_by != 'user':
         queryset = OutboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
 
-    else:
+    if not filter_dict:
         queryset = OutboundHistory.objects.filter().all().order_by(sort_by)
 
     data = OutboundHistorySerializer(queryset, many=True).data
