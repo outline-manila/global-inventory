@@ -19,7 +19,7 @@ urlpatterns = [
     path('brand/', rest_brand.brand_list_view,  name='brand_list'),
     path('brand/<int:pk>/', rest_brand.brand_detail_view,  name='brand-detail'),
     path('brand/create/', rest_brand.brand_create_view, name='brand_create'),
-    path('brand/update/<int:pk>', rest_brand.brand_update_view, name='brand_update'),
+    path('brand/update/<int:pk>/', rest_brand.brand_update_view, name='brand_update'),
     path('brand/search/', rest_brand.brand_search_view, name='brand_search'),
     path('brand/batch_delete/', rest_brand.brand_delete_apiview, name='brand_delete'),
 
