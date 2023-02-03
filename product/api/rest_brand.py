@@ -110,6 +110,6 @@ def brand_delete_apiview(request, pk=None, *args, **kwargs):
 
     return Response({"message": f"Brands {delete_ids} successfully deleted"})
 
-@api_view(['POST'])
-def bulk_create_brand():
-    pass
+# @api_view(['POST'])
+# def bulk_create_brand():
+#     pass
