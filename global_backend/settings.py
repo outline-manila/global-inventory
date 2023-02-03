@@ -95,14 +95,23 @@ DATABASES = {
         'HOST': os.environ.get('PGHOST'),
         'PORT': os.environ.get('PGPORT')
     },
-    # 'default': {
-    #     'ENGINE': os.environ.get('DB_ENGINE'),
-    #     'NAME': os.environ.get('PGDATABASE'),
-    #     'USER': os.environ.get('PGUSER'),
-    #     'PASSWORD': os.environ.get('PROD_PGPASSWORD'),
-    #     'HOST': os.environ.get('PROD_PGHOST'),
-    #     'PORT': os.environ.get('PROD_PGPORT')
-    # }
+    'prod': {
+        'ENGINE': os.environ.get('DB_ENGINE'),
+        'NAME': os.environ.get('PGDATABASE'),
+        'USER': os.environ.get('PGUSER'),
+        'PASSWORD': os.environ.get('PROD_PGPASSWORD'),
+        'HOST': os.environ.get('PROD_PGHOST'),
+        'PORT': os.environ.get('PROD_PGPORT')
+    },
+
+    'stg': {
+        'ENGINE': os.environ.get('DB_ENGINE'),
+        'NAME': os.environ.get('PGDATABASE'),
+        'USER': os.environ.get('PGUSER'),
+        'PASSWORD': os.environ.get('STG_PGPASSWORD'),
+        'HOST': os.environ.get('STG_PGHOST'),
+        'PORT': os.environ.get('STG_PGPORT')
+    }
 }
 
 
