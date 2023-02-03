@@ -80,6 +80,8 @@ class WarehouseSerializer(serializers.HyperlinkedModelSerializer):
         
 
 class ProductSerializer(serializers.ModelSerializer):
+    part = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
+    
     class Meta:
         model = Product
         fields = (
@@ -88,7 +90,6 @@ class ProductSerializer(serializers.ModelSerializer):
             'description',
             'warehouse',
             'part',
-            'other_part',
             'brand',
             'remaining_stock',
             'unit',
@@ -96,6 +97,34 @@ class ProductSerializer(serializers.ModelSerializer):
             'updated_at',
             'created_at'
         )
+
+class PartSerializerTransaction(serializers.Serializer):
+
+    class Meta:
+        model = PartNo
+        fields = ('part', )
+
+
+class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
+    
+    part = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
+    part = serializers.StringRelatedField(source='part.part', read_only=True)
+
+    class Meta:
+        model = Product
+        fields = (
+            'id',
+            'uuid',
+            'description',
+            'warehouse',
+            'part',
+            'brand',
+            'remaining_stock',
+            'unit',
+            'supplier',
+            'updated_at',
+            'created_at'
+        )  
 
 class UserSerializerTransaction(serializers.HyperlinkedModelSerializer):
     class Meta:

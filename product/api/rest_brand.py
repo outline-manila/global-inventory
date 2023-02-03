@@ -38,6 +38,7 @@ class BrandCreateAPIView(generics.CreateAPIView):
             serializer.save()
             return Response({"message": f"Brand {body.get('brand')} successfully created"})
 
+        print(serializer.errors)
         error_dict = {error: serializer.errors[error][0] for error in serializer.errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
 
@@ -108,3 +109,7 @@ def brand_delete_apiview(request, pk=None, *args, **kwargs):
         brand.delete()
 
     return Response({"message": f"Brands {delete_ids} successfully deleted"})
+
+@api_view(['POST'])
+def bulk_create_brand():
+    pass

@@ -31,18 +31,29 @@ class PartNoCreateAPIView(generics.CreateAPIView):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         serializer = PartNoSerializer(data=body) 
-        product_serializer = ProductSerializer(data=body)
         is_valid = False
+
+        part_name = body['part']
+        part_brand = body['brand']
+
+        queryset = PartNo.objects.filter(part=part_name, brand=part_brand)
+        
+        if queryset:
+            return Response({"message": f"Part {part_name} with this Brand {part_brand} already exists"}, status=status.HTTP_409_CONFLICT)
 
         if serializer.is_valid():
             is_valid = True
-            serializer.save()
-            print('hello')
+            part_obj = serializer.save()
+            part_id = part_obj.pk
+
+
+
+            body['part'] = part_id
+            product_serializer = ProductSerializer(data=body)
 
             if product_serializer.is_valid():
-                print(' Running ')
                 product_serializer.save()
-                return Response({"message": f"PartNo {body.get('part')} successfully created"})
+                return Response({"message": f"PartNo {body.get('part')} successfully created"}, status=status.HTTP_201_CREATED)
 
         errors = serializer.errors
         if is_valid: 
@@ -50,6 +61,7 @@ class PartNoCreateAPIView(generics.CreateAPIView):
 
         error_dict = {error: errors[error][0] for error in errors}
         return Response(error_dict, status=status.HTTP_409_CONFLICT)
+        return Response({'Hello': "world"})
 
 part_no_create_view = PartNoCreateAPIView.as_view()
 

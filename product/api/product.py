@@ -9,7 +9,7 @@ from django.db.models import Q, F
 from itertools import chain
 from ..models import Product, invoice_number, InboundHistory, OutboundHistory
 from core.models import User
-from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer, InboundHistoryCreateSerializer, OutboundHistoryCreateSerializer
+from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer, InboundHistoryCreateSerializer, OutboundHistoryCreateSerializer, ReturnProductSerializer
 
 
 def generate_action(parts: list, action):
@@ -39,8 +39,7 @@ product_detail_view = ProductDetailAPIView.as_view()
 
 class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(~Q(brand='NaN')).all()
-    serializer_class = ProductSerializer
-    q = Product.objects.filter(part='This is a Simulation').values('remaining_stock').first()
+    serializer_class = ReturnProductSerializer
 
 product_list_view = ProductListAPIView.as_view()
 
@@ -203,7 +202,7 @@ def product_search_view(request, *args, **kwargs):
     else:
         queryset = Product.objects.filter().all().order_by(sort_by)
 
-    data = ProductSerializer(queryset, many=True).data
+    data = ReturnProductSerializer(queryset, many=True).data
     p = Paginator(data, page_size)
 
     result = {}
