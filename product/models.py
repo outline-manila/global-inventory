@@ -48,7 +48,7 @@ class PartNo(models.Model):
     is_active = models.BooleanField(default=True)
     end_date = models.DateTimeField(blank=True, null=True, default=None)
     start_date = models.DateTimeField(blank=True, null=True, default=None)
-    brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.CASCADE)
+    brand = models.ForeignKey(Brand, to_field="brand", db_column="brand", on_delete=models.CASCADE)
 
 class Unit(models.Model):
 

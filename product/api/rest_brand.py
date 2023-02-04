@@ -113,3 +113,42 @@ def brand_delete_apiview(request, pk=None, *args, **kwargs):
 # @api_view(['POST'])
 # def bulk_create_brand():
 #     pass
+
+@api_view(['POST'])
+def bulk_create_brands(request):
+    print('asdasdsd')
+    if "csv_file" not in request.FILES:
+        return Response({"error": "No CSV file found in request"}, status=status.HTTP_400_BAD_REQUEST)
+
+    csv_file = request.FILES["csv_file"]
+
+    if not csv_file.name.endswith('.csv'):
+        return Response({"error": "File is not a CSV file"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Read the csv file
+    print('Reading CSV File')
+    brands = []
+    file_data = csv_file.read().decode("UTF-8")
+    lines = file_data.split("\n")
+    header = None
+    # print(file_data)
+    for line in lines:
+        print(line)
+        if header is None:
+            header = line.split(",")
+
+        else:
+            brand = line.split(",")
+            print('BRand', brand)
+            brand_dict = dict(zip(header, brand))
+            brands.append(brand_dict)
+    
+    print('enddd new')
+
+    print(brands)
+
+    serializer = BrandSerializer(data=brands, many=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -20,7 +20,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
             'employee_id', 
             'first_name', 
             'last_name', 
-            # 'job_role', 
             'joined_on'
         )
 
@@ -70,8 +69,8 @@ def user_search_view(request, pk=None, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or 'last_name'
-    filter_by = body.get('filterBy')
-    filter_id = body.get('filterId')
+    filter_by = body.get('filterBy') and None
+    filter_id = body.get('filterId') and None
     filter_dict = None
 
     if filter_by and filter_id: filter_dict = {filter_by: filter_id}

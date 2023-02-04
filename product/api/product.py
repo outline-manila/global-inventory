@@ -193,14 +193,33 @@ def product_search_view(request, *args, **kwargs):
     filter_by = body.get('filterBy')
     filter_id = body.get('filterId')
     filter_dict = None
+    search_key = body.get('searchKey')
 
-    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+    # if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+
+    # if filter_dict:
+    #     queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
+
+    # else:
+    #     queryset = Product.objects.filter().all().order_by(sort_by)
+
+    if (filter_by and filter_id) or search_key:
+        filter_dict = {}
+
+        if filter_by and filter_id:
+            filter_dict = {filter_dict[filter_by]: filter_id}
+        if search_key: filter_dict['part__icontains'] = search_key
 
     if filter_dict:
         queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
 
     else:
         queryset = Product.objects.filter().all().order_by(sort_by)
+
+    result = {}
+    if not (current_page and page_size):
+        result['data'] = queryset.values()
+        return Response(result)
 
     data = ReturnProductSerializer(queryset, many=True).data
     p = Paginator(data, page_size)

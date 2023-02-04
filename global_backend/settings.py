@@ -103,7 +103,6 @@ DATABASES = {
         'HOST': os.environ.get('PROD_PGHOST'),
         'PORT': os.environ.get('PROD_PGPORT')
     },
-
     'stg': {
         'ENGINE': os.environ.get('DB_ENGINE'),
         'NAME': os.environ.get('PGDATABASE'),

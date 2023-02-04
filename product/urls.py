@@ -1,5 +1,6 @@
 from product.api.rest_brand import BrandDetailAPIView
 from django.urls import path, include
+from core.api import rest_user
 
 from .api import (
     rest_brand,
@@ -22,6 +23,7 @@ urlpatterns = [
     path('brand/update/<int:pk>/', rest_brand.brand_update_view, name='brand_update'),
     path('brand/search/', rest_brand.brand_search_view, name='brand_search'),
     path('brand/batch_delete/', rest_brand.brand_delete_apiview, name='brand_delete'),
+    path('brand/bulk/create/', rest_brand.bulk_create_brands, name='brand_bulk'),
 
     #suppliers
     path('supplier/', rest_supplier.supplier_list_view,  name='supplier_list'),
@@ -62,6 +64,7 @@ urlpatterns = [
     path('part/update/<int:pk>/', rest_part_no.part_no_update_view, name='part_no_update'),
     path('part/search/', rest_part_no.part_no_search_view, name='part_no_search'),
     path('part/batch_delete/', rest_part_no.part_delete_apiview, name='part_no_delete'),
+    path('part/bulk/create/', rest_part_no.bulk_create_parts , name='part_bulk_create'),
 
     # # user
     path('user/token/', get_user_by_token.get_user_by_token,  name='user_token'),
@@ -69,7 +72,7 @@ urlpatterns = [
     # path('user/<int:pk>/', rest_user.user_detail_view,  name='user-detail'),
     # path('user/create/', rest_user.user_create_view, name='user_create'),
     # path('user/update/<int:pk>', rest_user.user_update_view, name='user_update'),
-    # path('user/search/', rest_user.user_search_view, name='user_search'),
+    path('user/search/', rest_user.user_search_view, name='user_search'),
 
     #product
     path('inventory/', product.product_list_view,  name='product_list'),
