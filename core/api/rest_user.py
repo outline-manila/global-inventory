@@ -84,7 +84,7 @@ def user_search_view(request, pk=None, *args, **kwargs):
     data = UserSerializer(queryset, many=True).data
     p = Paginator(data, page_size)
 
-    # result = {}
+    result = {}
     # result['total'] = p.count
     # result['numPages'] = p.num_pages
     # result['data'] = p.page(current_page).object_list
