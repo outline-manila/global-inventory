@@ -84,9 +84,14 @@ def user_search_view(request, pk=None, *args, **kwargs):
     data = UserSerializer(queryset, many=True).data
     p = Paginator(data, page_size)
 
-    result = {}
-    result['total'] = p.count
-    result['numPages'] = p.num_pages
-    result['metadata'] = p.page(current_page).object_list
+    # result = {}
+    # result['total'] = p.count
+    # result['numPages'] = p.num_pages
+    # result['data'] = p.page(current_page).object_list
+
+    result['metadata'] = {}
+    result['metadata']['total'] = p.count
+    result['metadata']['numPages'] = p.num_pages
+    result['data'] = p.page(current_page).object_list
 
     return Response(result)
