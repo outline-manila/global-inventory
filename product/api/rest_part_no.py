@@ -99,7 +99,7 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     if (filter_by and filter_id) or search_key:
         filter_dict = {}
 
-        if filter_by and filter_id:
+        if filter_by and filter_id and None:
             filter_dict = {filter_dict[filter_by]: filter_id}
         if search_key: filter_dict['part__icontains'] = search_key
 
@@ -154,7 +154,7 @@ def bulk_create_parts(request):
     file_data = csv_file.read().decode("UTF-8")
     lines = file_data.split("\n")
     header = None
-    # lines = lines[]
+    lines = lines[:20]
     print(lines)
     for line in lines:
         if header is None:
@@ -192,6 +192,7 @@ def bulk_create_parts(request):
             data={}
             data['part'] = part.id
             data['brand'] = part.brand.brand
+            data['description'] = part.description
             data['other_part_no'] = part.other_part_no
             
             product_serializer = ProductSerializer(data=data)
