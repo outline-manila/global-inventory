@@ -190,25 +190,19 @@ def product_search_view(request, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
-    filter_by = body.get('filterBy')
+    filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
+    filter_by = 'alternatives__contains'
+    print(filter_by)
     filter_id = body.get('filterId')
     filter_dict = None
     search_key = body.get('searchKey')
-
-    # if filter_by and filter_id: filter_dict = {filter_by: filter_id}
-
-    # if filter_dict:
-    #     queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
-
-    # else:
-    #     queryset = Product.objects.filter().all().order_by(sort_by)
 
     if (filter_by and filter_id) or search_key:
         filter_dict = {}
 
         if filter_by and filter_id:
-            filter_dict = {filter_dict[filter_by]: filter_id}
-        if search_key: filter_dict['part__icontains'] = search_key
+            filter_dict[filter_by] = filter_id
+        if search_key: filter_dict['part__contains'] = search_key
 
     if filter_dict:
         queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
