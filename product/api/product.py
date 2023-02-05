@@ -63,10 +63,7 @@ def get_by_part_warehouse(request):
     queryset = Product.objects.filter(**filter_dict).first()
 
     if not queryset:
-        print('NOT QUERYSET')
-        print("PART ID ", part_id)
         part_obj = get_object_or_404(PartNo, pk=part_id)
-        print(part_obj)
         result = PartNoSerializer(part_obj, many=False).data
         return Response(result)
     
@@ -112,13 +109,19 @@ def update_product_stock(request, *args, **kwargs):
         inbound_dict['supplier'] = supplier
         inbound_dict['warehouse'] = warehouse
         inbound_dict['brand'] = part.get('brand')
+        inbound_dict['description'] = part.get('description')
         quantity = part.get('quantity')
 
         queryset = Product.objects.filter(part=part.get('part'))
         if not queryset:
+            part_object = PartNo.objects.filter(part=part.get('part')).first()
+            inbound_dict['part'] = part_object.id
             product_serializer = ProductSerializer(data=inbound_dict)
             if product_serializer.is_valid():
                 product_serializer.save()
+            else:
+                error_dict = {error: product_serializer.errors[error][0] for error in product_serializer.errors}
+                return Response(error_dict, status=status.HTTP_409_CONFLICT)
         else:        
             queryset.update(remaining_stock=F('remaining_stock') + quantity, **inbound_dict)
 
