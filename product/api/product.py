@@ -40,7 +40,7 @@ def generate_action(parts: list, action):
 
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = ReturnProductSerializer
     lookup_field = 'part'
 
 product_detail_view = ProductDetailAPIView.as_view()
@@ -57,16 +57,16 @@ def get_by_part_warehouse(request):
     filter_dict = {}
     filter_dict['part'] = part
     filter_dict['brand'] = brand
-    warehouse['warehouse'] = warehouse
+    filter_dict['warehouse'] = warehouse
 
     queryset = Product.objects.filter(**filter_dict).first()
 
     if not queryset:
-        part_obj = PartNo.object.filter(part=part).first()
-        result = PartNoSerializer(part_obj)
+        part_obj = PartNo.objects.filter(id=part).first()
+        result = PartNoSerializer(part_obj, many=False).data
         return Response(result)
     
-    return ProductSerializer(queryset)
+    return Response(ReturnProductSerializer(queryset).data)
 
 class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(~Q(brand='NaN')).all()
@@ -96,7 +96,6 @@ def update_product_stock(request, *args, **kwargs):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
-    invoice_date = body.get('invoice_date')
     supplier = body.get('supplier')
     warehouse = body.get('warehouse')
     parts = body.get('product')
@@ -108,10 +107,16 @@ def update_product_stock(request, *args, **kwargs):
         inbound_dict['part'] = part.get('part')
         inbound_dict['supplier'] = supplier
         inbound_dict['warehouse'] = warehouse
+        inbound_dict['brand'] = part.get('brand')
         quantity = part.get('quantity')
 
         queryset = Product.objects.filter(part=part.get('part'))
-        queryset.update(remaining_stock=F('remaining_stock') + quantity, **inbound_dict)
+        if not queryset:
+            product_serializer = ProductSerializer(data=inbound_dict)
+            if product_serializer.is_valid():
+                product_serializer.save()
+        else:        
+            queryset.update(remaining_stock=F('remaining_stock') + quantity, **inbound_dict)
 
     reference_number =  update_inbound_history(body)
     # return reference_number
