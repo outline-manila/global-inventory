@@ -52,7 +52,6 @@ class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'job_role', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
 
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
-    brand = serializers.StringRelatedField(source='brand.brand', read_only=True)
     class Meta:
         model = PartNo
         fields = ('id', 'part', 'alternatives', 'brand', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')

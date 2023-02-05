@@ -128,6 +128,7 @@ def bulk_create_brands(request):
     # Read the csv file
     print('Reading CSV File')
     brands = []
+    is_all_valid = True
     file_data = csv_file.read().decode("UTF-8")
     lines = file_data.split("\n")
     header = None
@@ -142,13 +143,16 @@ def bulk_create_brands(request):
             print('BRand', brand)
             brand_dict = dict(zip(header, brand))
             brands.append(brand_dict)
-    
-    print('enddd new')
 
-    print(brands)
+    for brand in brands:
+        serializer = BrandSerializer(data=brands, many=True)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            is_all_valid = False
 
-    serializer = BrandSerializer(data=brands, many=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if not is_all_valid:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(serializer.data, status=status.HTTP_201_CREATED)

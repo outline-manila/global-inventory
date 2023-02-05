@@ -238,13 +238,17 @@ def product_search_view(request, *args, **kwargs):
 
     # else:
     filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
-    print(filter_by)
     filter_id = body.get('filterId')
     filter_dict = None
     search_key = body.get('searchKey')
+    warehouse = body.get('warehouse')
+
 
     if (filter_by and filter_id) or search_key:
-        filter_dict = {}
+        if warehouse:
+            filter_dict = {"warehouse": warehouse}
+        else: 
+            filter_dict = {}
 
         if filter_by and filter_id:
             filter_dict[filter_by] = filter_id

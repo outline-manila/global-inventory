@@ -155,6 +155,7 @@ def bulk_create_parts(request):
     lines = file_data.split("\n")
     header = None
     lines = lines[:20]
+    part_object_list = []
     print(lines)
     for line in lines:
         if header is None:
@@ -164,44 +165,29 @@ def bulk_create_parts(request):
             part_dict = dict(zip(header, part))
             parts.append(part_dict)
 
-    # Check if there is a duplicate part with the same brand
-    brand_part_combinations = []
-    print("##"*50)
-    for part in parts:
-        brand_part_combination = (part['brand'], part['part'])
-        if brand_part_combination in brand_part_combinations:
-            # return Response({"error": f"Duplicate part with brand '{part['brand']}' and part '{part['part']}' found in CSV file"}, status=status.HTTP_400_BAD_REQUEST)
-            print(f"DUPLICATE FOUND {part['brand']}' and part '{part['part']} SKIPPING THESE")
-        brand_part_combinations.append(brand_part_combination)
-    print("##"*50)
+    for part in parts[:10]:
+        serializer = PartNoSerializer(data=part)
+        if serializer.is_valid():
+            part_object = serializer.save()
+            part_object_list.append(part_object)
+        else:
+            print("PROBLEM WITH THIS PART. SKIPPING", part)
 
-
-    serializer = PartNoSerializer(data=parts, many=True)
-    if serializer.is_valid():
-        part_list = serializer.save()
-        print(part_list)
-        # part_obj = serializer.save()
-        # part_id = part_obj.pk
-        # ['part'] = part_id
-        # product_serializer = ProductSerializer(data=body)
-
-        # if product_serializer.is_valid():
-        #     product_serializer.save()
-        print('PART LIST LEN', len(part_list))
-        for part in part_list:
-            data={}
-            data['part'] = part.id
-            data['brand'] = part.brand.brand
-            data['description'] = part.description
-            data['other_part_no'] = part.other_part_no
-            
-            product_serializer = ProductSerializer(data=data)
-            print('saving', data)
-            if product_serializer.is_valid():
-                print('IS VALID')
-                product_serializer.save()
-            else:
-                return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    for part in part_object_list:
+        data={}
+        data['part'] = part.id
+        data['brand'] = part.brand.brand
+        data['description'] = part.description
+        data['alternatives'] = part.alternatives
+        
+        product_serializer = ProductSerializer(data=data)
+        print('saving', data)
+        if product_serializer.is_valid():
+            print('IS VALID')
+            product_serializer.save()
+        else:
+            print("PROBLEM WITH THIS PRODUCT, SKIPPING")
+            # return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
                 
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
