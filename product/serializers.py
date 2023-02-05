@@ -109,7 +109,7 @@ class PartSerializerTransaction(serializers.Serializer):
 class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
     
     part = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
-    # alternatives = serializers.StringRelatedField(source='part.alternatives', read_only=True)
+    alternatives = serializers.StringRelatedField(source='part.alternatives', read_only=True)
     part = serializers.StringRelatedField(source='part.part', read_only=True)
 
     class Meta:
