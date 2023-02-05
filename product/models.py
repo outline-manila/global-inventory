@@ -114,7 +114,7 @@ class Product(models.Model):
     warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
     # part = models.ForeignKey(PartNo ,related_name="part_number" , to_field="part", db_column="part", on_delete=models.CASCADE, default='NaN')
     part = models.ForeignKey(PartNo, on_delete=models.CASCADE, null=False, default=None)
-    alternative = models.TextField(blank=True, null=True)
+    alternatives = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
     brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.CASCADE)
     remaining_stock = models.IntegerField(blank=False, default=0, null=False)
