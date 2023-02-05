@@ -184,14 +184,21 @@ def outbound_product(request, *args, **kwargs):
     for part_item in parts:
         inbound_dict = {}
         part = part_item.get('part')
+        brand = part_item.get('brand')
         inbound_dict['part'] = part
         quantity = part_item.get('quantity')
         unit = part_item.get('unit')
 
-        queryset = Product.objects.filter(part=part)
+        print('part', part)
+        print('brand', brand)
+
+        part_obj = PartNo.objects.filter(part=part, brand=brand).first()
+        part_id = part_obj.id
+
+        queryset = Product.objects.filter(part=part_id, warehouse=body.get('warehouse_from'))
         print(queryset)
         if not queryset: return Response({'message': 'part not found'}, status=status.HTTP_404_NOT_FOUND)
-        remaining_stocks = Product.objects.filter(part=part).values('remaining_stock').first()['remaining_stock']
+        remaining_stocks = Product.objects.filter(part=part_id).values('remaining_stock').first()['remaining_stock']
         if remaining_stocks < quantity: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         queryset.update(remaining_stock=F('remaining_stock') - quantity, unit=unit)
 
