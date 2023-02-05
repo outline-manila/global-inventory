@@ -5,6 +5,7 @@ from django.utils import timezone
 from rest_framework import generics, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 from django.db.models import Q, F
 from itertools import chain
 from ..models import Product, invoice_number, InboundHistory, OutboundHistory, PartNo
@@ -50,19 +51,22 @@ def get_by_part_warehouse(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
-    part = body.get('part_id')
+    part_id = body.get('part_id')
     brand = body.get('brand')
     warehouse = body.get('warehouse')
 
     filter_dict = {}
-    filter_dict['part'] = part
+    filter_dict['part'] = part_id
     filter_dict['brand'] = brand
     filter_dict['warehouse'] = warehouse
 
     queryset = Product.objects.filter(**filter_dict).first()
 
     if not queryset:
-        part_obj = PartNo.objects.filter(id=part).first()
+        print('NOT QUERYSET')
+        print("PART ID ", part_id)
+        part_obj = get_object_or_404(PartNo, pk=part_id)
+        print(part_obj)
         result = PartNoSerializer(part_obj, many=False).data
         return Response(result)
     
