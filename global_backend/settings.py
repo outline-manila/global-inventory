@@ -88,7 +88,7 @@ WSGI_APPLICATION = 'global_backend.wsgi.application'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default_': {
+    'default': {
         'ENGINE': os.environ.get('DB_ENGINE'),
         'NAME': os.environ.get('PGDATABASE'),
         'USER': os.environ.get('PGUSER'),
@@ -104,7 +104,7 @@ DATABASES = {
         'HOST': os.environ.get('PROD_PGHOST'),
         'PORT': os.environ.get('PROD_PGPORT')
     },
-    'default': {
+    'default_s': {
         'ENGINE': os.environ.get('DB_ENGINE'),
         'NAME': os.environ.get('PGDATABASE'),
         'USER': os.environ.get('PGUSER'),
