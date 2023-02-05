@@ -226,8 +226,11 @@ def product_search_view(request, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
+    # if filter_by == "part":
+    #     filter_by = 'part__part__contains'
+
+    # else:
     filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
-    filter_by = 'alternatives__contains'
     print(filter_by)
     filter_id = body.get('filterId')
     filter_dict = None
