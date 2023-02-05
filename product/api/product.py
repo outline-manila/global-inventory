@@ -39,12 +39,18 @@ def generate_action(parts: list, action):
 
     return action_string
 
-class ProductDetailAPIView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ReturnProductSerializer
-    lookup_field = 'part'
+# class ProductDetailAPIView(generics.RetrieveAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ReturnProductSerializer
+#     lookup_field = 'part'
 
-product_detail_view = ProductDetailAPIView.as_view()
+# product_detail_view = ProductDetailAPIView.as_view()
+@api_view(["GET"])
+def product_detail_view(request, part_id):
+    part = get_object_or_404(PartNo, pk=part_id)
+    result = PartNoSerializer(part, many=False).data
+    part_name = result['part'] 
+    return Response({"M": part_name})
 
 @api_view(["POST"])
 def get_by_part_warehouse(request):
@@ -53,6 +59,11 @@ def get_by_part_warehouse(request):
 
     part_id = body.get('part_id')
     brand = body.get('brand')
+    part_name = body.get('part')
+    if part_name :
+        obj = PartNo.objects.filter(part=part_name, brand=brand).first()
+        part_id = obj.id
+
     warehouse = body.get('warehouse')
 
     filter_dict = {}
