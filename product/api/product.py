@@ -254,11 +254,10 @@ def product_search_view(request, *args, **kwargs):
     search_key = body.get('searchKey')
     warehouse = body.get('warehouse')
 
-
+    if warehouse:
+        filter_dict = {"warehouse": warehouse}
     if (filter_by and filter_id) or search_key:
-        if warehouse:
-            filter_dict = {"warehouse": warehouse}
-        else: 
+        if not warehouse:
             filter_dict = {}
 
         if filter_by and filter_id:
