@@ -52,6 +52,7 @@ class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('id', 'job_role', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
 
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
+    brand = serializers.StringRelatedField(source='brand.brand', read_only=True)
     class Meta:
         model = PartNo
         fields = ('id', 'part', 'alternatives', 'brand', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
@@ -108,7 +109,7 @@ class PartSerializerTransaction(serializers.Serializer):
 class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
     
     part = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
-    alternatives = serializers.StringRelatedField(source='part.alternatives', read_only=True)
+    # alternatives = serializers.StringRelatedField(source='part.alternatives', read_only=True)
     part = serializers.StringRelatedField(source='part.part', read_only=True)
 
     class Meta:
