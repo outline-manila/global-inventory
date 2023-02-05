@@ -218,7 +218,7 @@ def product_search_view(request, *args, **kwargs):
 
     result = {}
     if not (current_page and page_size):
-        result['data'] = queryset.values()
+        result['data'] = ReturnProductSerializer(queryset, many=True).data
         return Response(result)
 
     data = ReturnProductSerializer(queryset, many=True).data
@@ -226,7 +226,6 @@ def product_search_view(request, *args, **kwargs):
 
     result = {}
     result['metadata'] = {}
-
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages
     result['data'] = p.page(current_page).object_list
