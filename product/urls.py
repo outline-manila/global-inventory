@@ -77,6 +77,7 @@ urlpatterns = [
     #product
     path('inventory/', product.product_list_view,  name='product_list'),
     path('inventory/detail/<str:part>/', product.product_detail_view,  name='product_detail'),
+    path('inventory/detail/', product.get_by_part_warehouse,  name='product_detail'),
     path('inventory/inbound_stock/', product.update_product_stock,  name='product_stock_update'),
     path('inventory/outbound_stock/', product.outbound_product,  name='outbound_product'),
     path('inventory/update/<int:pk>/', product.product_update_view, name='product_update'),

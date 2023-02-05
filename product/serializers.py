@@ -54,7 +54,7 @@ class JobRoleSerializer(serializers.HyperlinkedModelSerializer):
 class PartNoSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PartNo
-        fields = ('id', 'part', 'other_part_no', 'brand', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
+        fields = ('id', 'part', 'alternatives', 'brand', 'description', 'is_active','updated_at', 'created_at', 'start_date', 'end_date')
 
 class UnitSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -108,7 +108,7 @@ class PartSerializerTransaction(serializers.Serializer):
 class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
     
     part = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
-    other_part_no = serializers.StringRelatedField(source='part.other_part_no', read_only=True)
+    alternatives = serializers.StringRelatedField(source='part.alternatives', read_only=True)
     part = serializers.StringRelatedField(source='part.part', read_only=True)
 
     class Meta:
@@ -119,7 +119,7 @@ class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
             'description',
             'warehouse',
             'part',
-            'other_part_no',
+            'alternatives',
             'brand',
             'remaining_stock',
             'unit',

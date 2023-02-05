@@ -7,9 +7,17 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Q, F
 from itertools import chain
-from ..models import Product, invoice_number, InboundHistory, OutboundHistory
+from ..models import Product, invoice_number, InboundHistory, OutboundHistory, PartNo
 from core.models import User
-from ..serializers import ProductSerializer, InboundHistorySerializer, OutboundHistorySerializer, InboundHistoryCreateSerializer, OutboundHistoryCreateSerializer, ReturnProductSerializer
+from ..serializers import (
+        ProductSerializer,
+        InboundHistorySerializer,
+        OutboundHistorySerializer,
+        InboundHistoryCreateSerializer,
+        OutboundHistoryCreateSerializer,
+        ReturnProductSerializer,
+        PartNoSerializer
+    )
 
 
 def generate_action(parts: list, action):
@@ -36,6 +44,29 @@ class ProductDetailAPIView(generics.RetrieveAPIView):
     lookup_field = 'part'
 
 product_detail_view = ProductDetailAPIView.as_view()
+
+@api_view(["POST"])
+def get_by_part_warehouse(request):
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    part = body.get('part')
+    brand = body.get('brand')
+    warehouse = body.get('warehouse')
+
+    filter_dict = {}
+    filter_dict['part'] = part
+    filter_dict['brand'] = brand
+    warehouse['warehouse'] = warehouse
+
+    queryset = Product.objects.filter(**filter_dict).first()
+
+    if not queryset:
+        part_obj = PartNo.object.filter(part=part).first()
+        result = PartNoSerializer(part_obj)
+        return Response(result)
+    
+    return ProductSerializer(queryset)
 
 class ProductListAPIView(generics.ListAPIView):
     queryset = Product.objects.filter(~Q(brand='NaN')).all()

@@ -42,7 +42,7 @@ class PartNo(models.Model):
 
     part = models.CharField(max_length=125, null=False, blank=False, unique=False, default="null")
     description = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
-    other_part_no = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
+    alternatives = models.CharField(max_length=500, null=True, blank=True, unique=False, default="")
     updated_at = models.DateTimeField(blank=False, default=timezone.now, null=False)
     created_at = models.DateTimeField(blank=False, default=timezone.now, null=False, editable=False)
     is_active = models.BooleanField(default=True)
@@ -114,7 +114,8 @@ class Product(models.Model):
     warehouse = models.ForeignKey(Warehouse, related_name="warehouse_name", to_field="warehouse", db_column="warehouse", on_delete=models.CASCADE, null=True)
     # part = models.ForeignKey(PartNo ,related_name="part_number" , to_field="part", db_column="part", on_delete=models.CASCADE, default='NaN')
     part = models.ForeignKey(PartNo, on_delete=models.CASCADE, null=False, default=None)
-    description = models.TextField(blank=True, null=False)
+    alternative = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
     brand = models.ForeignKey(Brand ,to_field="brand", db_column="brand", on_delete=models.CASCADE)
     remaining_stock = models.IntegerField(blank=False, default=0, null=False)
     unit = models.ForeignKey(Unit ,to_field="unit", db_column="unit", on_delete=models.CASCADE, null=True)
