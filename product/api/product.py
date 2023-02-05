@@ -50,7 +50,7 @@ def get_by_part_warehouse(request):
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
 
-    part = body.get('part')
+    part = body.get('part_id')
     brand = body.get('brand')
     warehouse = body.get('warehouse')
 
