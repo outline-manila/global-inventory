@@ -202,7 +202,7 @@ def product_search_view(request, *args, **kwargs):
 
         if filter_by and filter_id:
             filter_dict[filter_by] = filter_id
-        if search_key: filter_dict['part__contains'] = search_key
+        if search_key: filter_dict['part__part__contains'] = search_key
 
     if filter_dict:
         queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
