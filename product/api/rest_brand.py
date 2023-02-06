@@ -145,7 +145,7 @@ def bulk_create_brands(request):
             brands.append(brand_dict)
 
     for brand in brands:
-        serializer = BrandSerializer(data=brands, many=True)
+        serializer = BrandSerializer(data=brand)
         if serializer.is_valid():
             serializer.save()
         else:

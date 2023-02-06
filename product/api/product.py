@@ -81,7 +81,7 @@ def get_by_part_warehouse(request):
     return Response(ReturnProductSerializer(queryset).data)
 
 class ProductListAPIView(generics.ListAPIView):
-    queryset = Product.objects.filter(~Q(brand='NaN')).all()
+    queryset = Product.objects.filter(~Q(warehouse=None)).all()
     serializer_class = ReturnProductSerializer
 
 product_list_view = ProductListAPIView.as_view()
@@ -146,7 +146,8 @@ def update_inbound_history(body):
     products = body.get('product')
 
     parts = [ product['part'] for product in products ]
-    action = generate_action(parts, 'Added ')
+    part_names = [ PartNo.objects.get(pk=part).part for part in parts ]
+    action = generate_action(part_names, 'Added ')
     invoice_date = body.get('invoice_date')
 
     data = {}
