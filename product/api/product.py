@@ -111,8 +111,6 @@ def update_product_stock(request, *args, **kwargs):
 
         queryset = Product.objects.filter(part=part.get('part'), warehouse=warehouse)
         if not queryset:
-            part_object = PartNo.objects.filter(part=part.get('part')).first()
-            inbound_dict['part'] = part_object.id
             product_serializer = ProductSerializer(data=inbound_dict)
             if product_serializer.is_valid():
                 product_serializer.save()
@@ -181,9 +179,6 @@ def outbound_product(request, *args, **kwargs):
         brand = part_item.get('brand')
         quantity = part_item.get('quantity')
         unit = part_item.get('unit')
-
-        print('part', part_id)
-        print('brand', brand)
 
         queryset = Product.objects.filter(part=part_id, warehouse=body.get('warehouse_from'))
         print(queryset)
