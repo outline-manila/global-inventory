@@ -23,7 +23,7 @@ from ..serializers import (
 
 def generate_action(parts_list: list):
 
-    return ', '.join(['{} - {} - {}'.format(part['part_name'], part['qty'], part['brand']) for part in parts_list])
+    return ', '.join(['{} - ({}) - {}'.format(part['part_name'], part['qty'], part['brand']) for part in parts_list])
 
 # class ProductDetailAPIView(generics.RetrieveAPIView):
 #     queryset = Product.objects.all()
@@ -195,7 +195,7 @@ def outbound_product(request, *args, **kwargs):
         print('part', part)
         print('brand', brand)
 
-        part_obj = PartNo.objects.filter(part=part, brand=brand).first()
+        part_obj = PartNo.objects.filter(pk=part, brand=brand).first()
         part_id = part_obj.id
 
         queryset = Product.objects.filter(part=part_id, warehouse=body.get('warehouse_from'))
