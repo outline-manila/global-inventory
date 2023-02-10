@@ -107,7 +107,7 @@ class PartSerializerTransaction(serializers.Serializer):
 
 class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
     
-    part = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
+    part_id = serializers.PrimaryKeyRelatedField(queryset=PartNo.objects.all())
     alternatives = serializers.StringRelatedField(source='part.alternatives', read_only=True)
     part = serializers.StringRelatedField(source='part.part', read_only=True)
 
@@ -118,6 +118,7 @@ class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
             'uuid',
             'description',
             'warehouse',
+            'part_id',
             'part',
             'alternatives',
             'brand',
