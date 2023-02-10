@@ -21,23 +21,9 @@ from ..serializers import (
     )
 
 
-def generate_action(parts: list, action):
+def generate_action(parts_list: list):
 
-    part_string = ''
-
-    if not parts:
-        part_string = ''
-    elif len(parts) == 1:
-        part_string = f'Part {str(parts[0])}'
-    elif len(parts) == 2:
-       part_string =  f"Parts {parts[0]} and {parts[1]}"
-    else:
-        last_element = str(parts.pop())
-        part_string =  f"Parts {', '.join(map(str, parts))}, and {last_element}"
-
-    action_string = f'{action} {part_string}'
-
-    return action_string
+    return ', '.join(['{} - {} - {}'.format(part['part_name'], part['qty'], part['brand']) for part in parts_list])
 
 # class ProductDetailAPIView(generics.RetrieveAPIView):
 #     queryset = Product.objects.all()
@@ -145,9 +131,18 @@ def update_inbound_history(body):
 
     products = body.get('product')
 
-    parts = [ product['part'] for product in products ]
-    part_names = [ PartNo.objects.get(pk=part).part for part in parts ]
-    action = generate_action(part_names, 'Added ')
+    part_list = [ 
+        {
+            "part_name": PartNo.objects.get(pk=product.get('part')).part,
+            "qty": product.get('quantity'),
+            "brand": product.get('brand')
+
+        } for product in products
+     ]
+
+    # parts = [ product['part'] for product in products ]
+    # part_names = [ PartNo.objects.get(pk=part).part for part in parts ]
+    action = generate_action(part_list, 'Added ')
     invoice_date = body.get('invoice_date')
 
     data = {}
