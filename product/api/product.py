@@ -176,14 +176,6 @@ def outbound_product(request, *args, **kwargs):
 
     parts = body.get('product')
 
-    part_list = [ 
-        {
-            "part_name": PartNo.objects.get(pk=product.get('part')).part,
-            "qty": product.get('quantity'),
-            "brand": product.get('brand')
-
-        } for product in parts
-     ]
     for part_item in parts:
         inbound_dict = {}
         part = part_item.get('part')
@@ -209,11 +201,13 @@ def outbound_product(request, *args, **kwargs):
 
     print(reference_number)
 
-    return Response({'message': f'Remaining stocks decreased in {part_list}. Invoice Number: {reference_number}'})
+    return Response({'message': f'Remaining stocks decreased in {parts}. Invoice Number: {reference_number}'})
 
 def update_outbound_history(body):
 
     products = body.get('product')
+    print(products[0].get('part'))
+    print('ASDASD')
 
     part_list = [ 
         {
