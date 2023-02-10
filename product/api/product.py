@@ -142,7 +142,7 @@ def update_inbound_history(body):
 
     # parts = [ product['part'] for product in products ]
     # part_names = [ PartNo.objects.get(pk=part).part for part in parts ]
-    action = generate_action(part_list, 'Added ')
+    action = generate_action(part_list)
     invoice_date = body.get('invoice_date')
 
     data = {}
@@ -176,7 +176,14 @@ def outbound_product(request, *args, **kwargs):
 
     parts = body.get('product')
 
-    part_list = [ part['part'] for part in parts ]
+    part_list = [ 
+        {
+            "part_name": PartNo.objects.get(pk=product.get('part')).part,
+            "qty": product.get('quantity'),
+            "brand": product.get('brand')
+
+        } for product in parts
+     ]
     for part_item in parts:
         inbound_dict = {}
         part = part_item.get('part')
@@ -210,7 +217,7 @@ def update_outbound_history(body):
 
     parts = [ product['part'] for product in products ]
 
-    action = generate_action(parts, 'Decreased')
+    action = generate_action(parts)
     invoice_date = body.get('invoice_date')
     user_id = body.get('user_id')
     warehouse = body.get('warehouse_from')
