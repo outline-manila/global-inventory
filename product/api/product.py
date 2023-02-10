@@ -109,7 +109,7 @@ def update_product_stock(request, *args, **kwargs):
         inbound_dict['description'] = part.get('description')
         quantity = part.get('quantity')
 
-        queryset = Product.objects.filter(part=part.get('part'))
+        queryset = Product.objects.filter(part=part.get('part'), warehouse=warehouse)
         if not queryset:
             part_object = PartNo.objects.filter(part=part.get('part')).first()
             inbound_dict['part'] = part_object.id
