@@ -215,9 +215,16 @@ def update_outbound_history(body):
 
     products = body.get('product')
 
-    parts = [ product['part'] for product in products ]
+    part_list = [ 
+        {
+            "part_name": PartNo.objects.get(pk=product.get('part')).part,
+            "qty": product.get('quantity'),
+            "brand": product.get('brand')
 
-    action = generate_action(parts)
+        } for product in products
+     ]
+
+    action = generate_action(part_list)
     invoice_date = body.get('invoice_date')
     user_id = body.get('user_id')
     warehouse = body.get('warehouse_from')
