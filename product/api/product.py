@@ -177,18 +177,13 @@ def outbound_product(request, *args, **kwargs):
     parts = body.get('product')
 
     for part_item in parts:
-        inbound_dict = {}
-        part = part_item.get('part')
+        part_id = part_item.get('part_id')
         brand = part_item.get('brand')
-        inbound_dict['part'] = part
         quantity = part_item.get('quantity')
         unit = part_item.get('unit')
 
-        print('part', part)
+        print('part', part_id)
         print('brand', brand)
-
-        part_obj = PartNo.objects.filter(pk=part, brand=brand).first()
-        part_id = part_obj.id
 
         queryset = Product.objects.filter(part=part_id, warehouse=body.get('warehouse_from'))
         print(queryset)
