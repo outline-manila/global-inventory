@@ -181,11 +181,11 @@ def outbound_product(request, *args, **kwargs):
         quantity = part_item.get('quantity')
         unit = part_item.get('unit')
 
-        queryset = Product.objects.filter(part=part_id, brand=brand,warehouse=body.get('warehouse_from'))
-        print(queryset)
+        queryset = Product.objects.filter(part=part_id, warehouse=body.get('warehouse_from'))
         if not queryset: return Response({'message': 'part not found'}, status=status.HTTP_404_NOT_FOUND)
-        remaining_stocks = Product.objects.filter(part=part_id).values('remaining_stock').first()['remaining_stock']
+        remaining_stocks = Product.objects.filter(part=part_id, warehouse=body.get('warehouse_from')).values('remaining_stock').first()['remaining_stock']
         print(f"Remaining Stocks of {part_id} is {remaining_stocks}, quantity is {quantity} ")
+
         if remaining_stocks < quantity: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         queryset.update(remaining_stock=F('remaining_stock') - quantity, unit=unit)
 
@@ -247,10 +247,7 @@ def product_search_view(request, *args, **kwargs):
     current_page = body.get('currentPage') 
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
-    # if filter_by == "part":
-    #     filter_by = 'part__part__contains'
 
-    # else:
     filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
     filter_id = body.get('filterId')
     filter_dict = None
