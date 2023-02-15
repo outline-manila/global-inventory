@@ -185,6 +185,7 @@ def outbound_product(request, *args, **kwargs):
         print(queryset)
         if not queryset: return Response({'message': 'part not found'}, status=status.HTTP_404_NOT_FOUND)
         remaining_stocks = Product.objects.filter(part=part_id).values('remaining_stock').first()['remaining_stock']
+        print(f"Remaining Stocks of {part_id} is {remaining_stocks}, quantity is {quantity} ")
         if remaining_stocks < quantity: return Response({'message': 'value larger than stocks'}, status=status.HTTP_406_NOT_ACCEPTABLE)
         queryset.update(remaining_stock=F('remaining_stock') - quantity, unit=unit)
 
@@ -196,13 +197,13 @@ def outbound_product(request, *args, **kwargs):
 
 def update_outbound_history(body):
 
+    print('body', body)
+
     products = body.get('product')
-    print(products[0].get('part'))
-    print('ASDASD')
 
     part_list = [ 
         {
-            "part_name": PartNo.objects.get(pk=product.get('part')).part,
+            "part_name": PartNo.objects.get(pk=product.get('part_id')).part,
             "qty": product.get('quantity'),
             "brand": product.get('brand')
 
