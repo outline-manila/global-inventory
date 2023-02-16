@@ -264,18 +264,12 @@ def product_search_view(request, *args, **kwargs):
             filter_dict[filter_by] = filter_id
         if search_key: filter_dict['part__part__contains'] = search_key
 
-    if filter_dict:
-        queryset = Product.objects.filter(**filter_dict).all().order_by(sort_by)
-
-    else:
-        queryset = Product.objects.filter().all().order_by(sort_by)
-
     result = {}
     if not (current_page and page_size):
-        result['data'] = ReturnProductSerializer(queryset, many=True).data
+        result['data'] = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
         return Response(result)
 
-    data = ReturnProductSerializer(queryset, many=True).data
+    data = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
     p = Paginator(data, page_size)
 
     result = {}
