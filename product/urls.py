@@ -82,6 +82,7 @@ urlpatterns = [
     path('inventory/outbound_stock/', product.outbound_product,  name='outbound_product'),
     path('inventory/update/<int:pk>/', product.product_update_view, name='product_update'),
     path('inventory/search/', product.product_search_view, name='product_search'),
+    path('inventory/bulk/', product.bulk_create_product, name="bulk_create_product"),
 
     # employee
     path('employee/', rest_employee.employee_list_view,  name='employee_list'),

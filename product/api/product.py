@@ -446,6 +446,26 @@ def outbound_history_search_view(request, *args, **kwargs):
 
     return Response(result)
 
+#### DANGER ####
+@api_view(['POST'])
+def bulk_create_product(request):
 
+    part_object_list = PartNo.objects.filter().all()
+    for part in part_object_list:
+        data={}
+        data['part'] = part.id
+        data['brand'] = part.brand.brand
+        data['description'] = part.description
+        data['alternatives'] = part.alternatives
+        data['warehouse'] = 'Main Warehouse'
+        
+        product_serializer = ProductSerializer(data=data)
+        if product_serializer.is_valid():
+            product_serializer.save()
+        else:
+            print("PROBLEM WITH THIS PRODUCT, SKIPPING")
+            return Response(product_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                
+    return Response(product_serializer.data, status=status.HTTP_201_CREATED)
 
     
