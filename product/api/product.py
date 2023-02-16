@@ -197,7 +197,8 @@ def outbound_product(request, *args, **kwargs):
 def update_outbound_history(body):
 
     products = body.get('product')
-    print(products[0].get('part'))
+    print('this is products', products)
+    print(products[0].get('part_id'))
     print('ASDASD')
 
     part_list = [ 
