@@ -203,7 +203,7 @@ def update_outbound_history(body):
 
     part_list = [ 
         {
-            "part_name": PartNo.objects.get(pk=product.get('part')).part,
+            "part_name": PartNo.objects.get(pk=product.get('part_id')).part,
             "qty": product.get('quantity'),
             "brand": product.get('brand')
 
