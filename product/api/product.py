@@ -273,10 +273,13 @@ def product_search_view(request, *args, **kwargs):
         return Response(result)
 
     if filter_dict:
-        data = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+        p = Paginator(
+                ReturnProductSerializer(
+                    Product.objects.filter().all().order_by(sort_by), many=True).data, 
+                    page_size
+                )
     else:
-        data = ReturnProductSerializer(Product.objects.filter().all().order_by(sort_by), many=True).data
-    p = Paginator(data, page_size)
+        p = Paginator(ReturnProductSerializer(Product.objects.filter().all().order_by(sort_by), many=True).data, page_size)
 
     result = {}
     result['metadata'] = {}
