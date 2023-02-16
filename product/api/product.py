@@ -447,7 +447,7 @@ def outbound_history_search_view(request, *args, **kwargs):
     return Response(result)
 
 #### DANGER ####
-@api_view(['POST'])
+@api_view(['POST', 'GET'])
 def bulk_create_product(request):
 
     part_object_list = PartNo.objects.filter().all()
