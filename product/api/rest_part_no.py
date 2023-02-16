@@ -103,18 +103,12 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
             filter_dict = {filter_dict[filter_by]: filter_id}
         if search_key: filter_dict['part__icontains'] = search_key
 
-    if filter_dict:
-        queryset = PartNo.objects.filter(**filter_dict).all().order_by(sort_by)
-
-    else:
-        queryset = PartNo.objects.filter().all().order_by(sort_by)
-
     result = {}
     if not (current_page and page_size):
-        result['data'] = queryset.values()
+        result['data'] = PartNo.objects.filter(**filter_dict).all().order_by(sort_by).values()
         return Response(result)
 
-    data = PartNoSerializer(queryset, many=True).data
+    data = PartNoSerializer(PartNo.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
     p = Paginator(data, page_size)
 
     
