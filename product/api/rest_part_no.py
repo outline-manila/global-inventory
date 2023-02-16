@@ -94,7 +94,7 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     filter_by = body.get('filterBy')
     filter_id = body.get('filterId')
     search_key = body.get('searchKey')
-    filter_dict = {}
+    filter_dict = None
 
     if (filter_by and filter_id) or search_key:
         filter_dict = {}
@@ -105,10 +105,16 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
 
     result = {}
     if not (current_page and page_size):
-        result['data'] = PartNo.objects.filter(**filter_dict).all().order_by(sort_by).values()
+        if filter_dict:
+            result['data'] = PartNo.objects.filter(**filter_dict).all().order_by(sort_by).values()
+        else:
+            result['data'] = PartNo.objects.filter().all().order_by(sort_by).values()
         return Response(result)
 
-    data = PartNoSerializer(PartNo.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+    if filter_dict:
+        data = PartNoSerializer(PartNo.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+    else:
+        data = PartNoSerializer(PartNo.objects.filter().all().order_by(sort_by), many=True).data
     p = Paginator(data, page_size)
 
     

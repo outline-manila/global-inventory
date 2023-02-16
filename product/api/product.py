@@ -250,7 +250,7 @@ def product_search_view(request, *args, **kwargs):
 
     filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
     filter_id = body.get('filterId')
-    filter_dict = {}
+    filter_dict = None
     search_key = body.get('searchKey')
     warehouse = body.get('warehouse')
 
@@ -266,10 +266,16 @@ def product_search_view(request, *args, **kwargs):
 
     result = {}
     if not (current_page and page_size):
-        result['data'] = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+        if filter_dict:
+            result['data'] = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+        else:
+            result['data'] = ReturnProductSerializer(Product.objects.filter().all().order_by(sort_by), many=True).data
         return Response(result)
 
-    data = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+    if filter_dict:
+        data = ReturnProductSerializer(Product.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data
+    else:
+        data = ReturnProductSerializer(Product.objects.filter().all().order_by(sort_by), many=True).data
     p = Paginator(data, page_size)
 
     result = {}
