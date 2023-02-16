@@ -94,7 +94,7 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     filter_by = body.get('filterBy')
     filter_id = body.get('filterId')
     search_key = body.get('searchKey')
-    filter_dict = None
+    filter_dict = {}
 
     if (filter_by and filter_id) or search_key:
         filter_dict = {}

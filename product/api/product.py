@@ -250,7 +250,7 @@ def product_search_view(request, *args, **kwargs):
 
     filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
     filter_id = body.get('filterId')
-    filter_dict = None
+    filter_dict = {}
     search_key = body.get('searchKey')
     warehouse = body.get('warehouse')
 
