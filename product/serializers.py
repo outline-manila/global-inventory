@@ -129,6 +129,12 @@ class ReturnProductSerializer(serializers.HyperlinkedModelSerializer):
             'created_at'
         )  
 
+        # Define the fields to select_related
+        select_related_fields = ('part', 'brand')
+
+        # Define the fields to prefetch_related
+        prefetch_related_fields = ('part__alternatives',)
+
 class UserSerializerTransaction(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User

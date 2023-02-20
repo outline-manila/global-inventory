@@ -248,9 +248,9 @@ def product_search_view(request, *args, **kwargs):
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
 
+    filter_dict = None
     filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
     filter_id = body.get('filterId')
-    filter_dict = None
     search_key = body.get('searchKey')
     warehouse = body.get('warehouse')
 
@@ -273,19 +273,15 @@ def product_search_view(request, *args, **kwargs):
         return Response(result)
 
     if filter_dict:
-        p = Paginator(
-                ReturnProductSerializer(
-                    Product.objects.filter().all().order_by(sort_by), many=True).data, 
-                    page_size
-                )
+        p = Paginator(Product.objects.filter(**filter_dict).order_by(sort_by), page_size)
     else:
-        p = Paginator(ReturnProductSerializer(Product.objects.filter().all().order_by(sort_by), many=True).data, page_size)
+        p = Paginator(Product.objects.filter().all(), page_size)
 
     result = {}
     result['metadata'] = {}
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages
-    result['data'] = p.page(current_page).object_list
+    result['data'] = ReturnProductSerializer(p.page(current_page).object_list, many=True).data
 
     return Response(result)
 

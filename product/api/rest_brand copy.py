@@ -66,3 +66,64 @@ def job_role_search_view(request, pk=None, *args, **kwargs):
     result['metadata'] = p.page(current_page).object_list
 
     return Response(result)
+
+
+
+from django.db.models import Q, Prefetch
+
+@api_view(['POST'])
+def product_search_view(request, *args, **kwargs):
+
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+
+    current_page = body.get('currentPage') 
+    page_size = body.get('pageSize') 
+    sort_by = body.get('sortBy') or '-updated_at'
+
+    filter_by = f"{body.get('filterBy')}__{body.get('filterBy')}__contains"
+    filter_id = body.get('filterId')
+    filter_dict = None
+    search_key = body.get('searchKey')
+    warehouse = body.get('warehouse')
+
+    select_related_fields = ['part']
+
+    if warehouse:
+        filter_dict = {"warehouse": warehouse}
+    if (filter_by and filter_id) or search_key:
+        if not warehouse:   
+            filter_dict = {}
+
+        if filter_by and filter_id:
+            filter_dict[filter_by] = filter_id
+        if search_key: filter_dict['part__part__contains'] = search_key
+
+    # products = Product.objects.filter().order_by(sort_by)
+    # products = Product.objects.select_related('part').filter().order_by(sort_by)
+    # products = Product.objects.filter()
+
+
+    # if select_related_fields:
+    #     products = products.select_related(*select_related_fields)
+
+    # if prefetch_related_fields:
+    #     products = products.prefetch_related(*prefetch_related_fields)
+
+    # result = {}
+
+    # if not (current_page and page_size):
+    #     result['data'] = ReturnProductSerializer(Product.objects.select_related('part').filter().order_by(sort_by), many=True).data
+    #     return Response(result)
+
+    # # p = Paginator(Product.objects.select_related('part').filter().order_by(sort_by), page_size)
+    # p = Paginator(Product.objects.select_related('part').filter().order_by(sort_by), page_size)
+
+
+    # result['metadata'] = {}
+    # result['metadata']['total'] = p.count
+    # result['metadata']['numPages'] = p.num_pages
+    # # result['data'] = p.page(current_page).object_list
+    # result['data'] = ReturnProductSerializer(p.page(current_page).object_list, many=True).data
+
+    # return Response(result)
