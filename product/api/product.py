@@ -100,13 +100,15 @@ def update_product_stock(request, *args, **kwargs):
 
     part_list = [ part['part'] for part in parts ]
     for part in parts:
+
+        print('Part' part)
+
         inbound_dict = {}
         inbound_dict['unit'] = part.get('unit')
         inbound_dict['part'] = part.get('part')
         inbound_dict['supplier'] = supplier
         inbound_dict['warehouse'] = warehouse
         inbound_dict['brand'] = part.get('brand')
-        inbound_dict['description'] = part.get('description')
         quantity = part.get('quantity')
 
         queryset = Product.objects.filter(part=part.get('part'), warehouse=warehouse)
