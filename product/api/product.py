@@ -101,8 +101,6 @@ def update_product_stock(request, *args, **kwargs):
     part_list = [ part['part'] for part in parts ]
     for part in parts:
 
-        print('Part' part)
-
         inbound_dict = {}
         inbound_dict['unit'] = part.get('unit')
         inbound_dict['part'] = part.get('part')
