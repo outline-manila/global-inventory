@@ -112,15 +112,16 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
         return Response(result)
 
     if filter_dict:
-        p = Paginator(PartNoSerializer(PartNo.objects.filter(**filter_dict).all().order_by(sort_by), many=True).data, page_size)
+        p = Paginator(PartNo.objects.filter(**filter_dict).all().order_by(sort_by), page_size)
     else:
-        p = Paginator(PartNoSerializer(PartNo.objects.filter().all().order_by(sort_by), many=True).data, page_size)
+        p = Paginator(PartNo.objects.filter().all().order_by(sort_by), page_size)
 
     
     result['metadata'] = {}
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages
     result['data'] = p.page(current_page).object_list
+    result['data'] = PartNoSerializer(p.page(current_page).object_list, many=True).data
 
     return Response(result)
 
