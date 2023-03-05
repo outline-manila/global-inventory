@@ -92,9 +92,9 @@ DATABASES = {
         'ENGINE': os.environ.get('DB_ENGINE'),
         'NAME': os.environ.get('PGDATABASE'),
         'USER': os.environ.get('PGUSER'),
-        'PASSWORD': os.environ.get('PGPASSWORD'),
-        'HOST': os.environ.get('PGHOST'),
-        'PORT': os.environ.get('PGPORT')
+        'PASSWORD': os.environ.get('PG_PASSWORD'),
+        'HOST': os.environ.get('PG_HOST'),
+        'PORT': os.environ.get('PG_PORT')
     },
     'default_': {
         'ENGINE': os.environ.get('DB_ENGINE'),
