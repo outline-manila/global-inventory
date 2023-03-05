@@ -275,7 +275,7 @@ def product_search_view(request, *args, **kwargs):
     if filter_dict:
         p = Paginator(Product.objects.filter(**filter_dict).order_by(sort_by), page_size)
     else:
-        p = Paginator(Product.objects.filter().all(), page_size)
+        p = Paginator(Product.objects.filter().all().order_by(sort_by), page_size)
 
     result = {}
     result['metadata'] = {}
