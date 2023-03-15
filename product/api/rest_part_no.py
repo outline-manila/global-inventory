@@ -96,12 +96,30 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     search_key = body.get('searchKey')
     filter_dict = None
 
+    # contains_filter = {
+    #     "part": "part__icontains",
+    #     "brand": "brand__name__icontains"
+    # }
+
     if (filter_by and filter_id) or search_key:
         filter_dict = {}
 
-        if filter_by and filter_id and None:
-            filter_dict = {filter_dict[filter_by]: filter_id}
+        if filter_by and filter_id:
+            if filter_by == 'brand':
+                filter_dict[f"brand__brand__icontains"] = filter_id
+            else:
+                filter_dict[f"{filter_by}__icontains"] = filter_id
+
         if search_key: filter_dict['part__icontains'] = search_key
+
+
+###
+    # if (filter_by and filter_id) or search_key:
+
+    #     if filter_by and filter_id:
+    #         filter_dict[filter_by] = filter_id
+    #     if search_key: filter_dict['part__part__contains'] = search_key
+###
 
     result = {}
     if not (current_page and page_size):
