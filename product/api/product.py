@@ -100,12 +100,14 @@ def update_product_stock(request, *args, **kwargs):
 
     part_list = [ part['part'] for part in parts ]
     for part in parts:
+
         inbound_dict = {}
         inbound_dict['unit'] = part.get('unit')
         inbound_dict['part'] = part.get('part')
         inbound_dict['supplier'] = supplier
         inbound_dict['warehouse'] = warehouse
         inbound_dict['brand'] = part.get('brand')
+        inbound_dict['description'] = part.get('description')
         quantity = part.get('quantity')
 
         queryset = Product.objects.filter(part=part.get('part'), warehouse=warehouse)
@@ -121,7 +123,6 @@ def update_product_stock(request, *args, **kwargs):
             queryset.update(remaining_stock=F('remaining_stock') + quantity, **inbound_dict)
 
     reference_number =  update_inbound_history(body)
-    # return reference_number
 
     return Response({'message': f'Remaining stocks increased in {part_list}. Invoice Number: {reference_number}'})
 
