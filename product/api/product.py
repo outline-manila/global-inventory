@@ -468,7 +468,7 @@ def inbound_history_search_view(request, *args, **kwargs):
             if filter_by == "brand":
                 filter_dict[f"brand__brand__icontains"] = filter_id
             else:
-                filter_dict[f"{filter_by}__contains"] = filter_id
+                filter_dict[f"{filter_by}__{filter_by}__icontains"] = filter_id
 
         if search_key:
             filter_dict["part__icontains"] = search_key
