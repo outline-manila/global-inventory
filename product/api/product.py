@@ -465,10 +465,23 @@ def inbound_history_search_view(request, *args, **kwargs):
         filter_dict = {}
 
         if filter_by and filter_id:
-            if filter_by == "brand":
-                filter_dict[f"brand__brand__icontains"] = filter_id
-            else:
+            if filter_by == "user":
+                user_id_first = User.objects.filter(
+                    first_name__contains=filter_id
+                ).values("id")
+                user_id_last = User.objects.filter(
+                    last_name__contains=filter_id
+                ).values("id")
+                user_id_list = list(chain(user_id_first, user_id_last))
+                user_id_list = list(
+                    set([item for d in user_id_list for item in d.values()])
+                )
+                filter_dict["user__in"] = user_id_list
+                pass
+            elif filter_by in ("warehouse", "supplier"):
                 filter_dict[f"{filter_by}__{filter_by}__icontains"] = filter_id
+            else:
+                filter_dict[f"{filter_by}__icontains"] = filter_id
 
         if search_key:
             filter_dict["part__icontains"] = search_key
