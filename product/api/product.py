@@ -467,10 +467,10 @@ def inbound_history_search_view(request, *args, **kwargs):
         if filter_by and filter_id:
             if filter_by == "user":
                 user_id_first = User.objects.filter(
-                    first_name__contains=filter_id
+                    first_name__icontains=filter_id
                 ).values("id")
                 user_id_last = User.objects.filter(
-                    last_name__contains=filter_id
+                    last_name__icontains=filter_id
                 ).values("id")
                 user_id_list = list(chain(user_id_first, user_id_last))
                 user_id_list = list(
