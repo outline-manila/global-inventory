@@ -541,6 +541,63 @@ def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
     return Response({"message": f"InboundHistorys {delete_ids} successfully deleted"})
 
 
+# @api_view(["POST"])
+# def outbound_history_search_view(request, *args, **kwargs):
+#     body_unicode = request.body.decode("utf-8")
+#     body = json.loads(body_unicode)
+
+#     current_page = body.get("currentPage")
+#     page_size = body.get("pageSize")
+#     sort_by = body.get("sortBy") or "-updated_at"
+#     filter_by = body.get("filterBy")
+#     if filter_by:
+#         if body.get("filterBy") == "user":
+#             filter_by = f"{body.get('filterBy')}"
+#             filter_id = body.get("filterId")
+#             user_id_first = User.objects.filter(first_name__contains=filter_id).values(
+#                 "id"
+#             )
+#             user_id_last = User.objects.filter(last_name__contains=filter_id).values(
+#                 "id"
+#             )
+#             user_id_list = list(chain(user_id_first, user_id_last))
+#             user_id_list = list(
+#                 set([item for d in user_id_list for item in d.values()])
+#             )
+#             queryset = (
+#                 OutboundHistory.objects.filter(user__in=user_id_list)
+#                 .all()
+#                 .order_by(sort_by)
+#             )
+#         else:
+#             filter_by = f"{body.get('filterBy')}__contains"
+#             filter_id = body.get("filterId")
+
+#     filter_dict = None
+
+#     if filter_by and filter_id:
+#         filter_dict = {filter_by: filter_id}
+
+#     if filter_dict and filter_by != "user":
+#         queryset = OutboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
+
+#     if not filter_dict:
+#         queryset = OutboundHistory.objects.filter().all().order_by(sort_by)
+
+#     data = OutboundHistorySerializer(queryset, many=True).data
+#     p = Paginator(data, page_size)
+
+#     result = {}
+#     result["metadata"] = {}
+
+#     result["metadata"]["total"] = p.count
+#     result["metadata"]["numPages"] = p.num_pages
+#     result["data"] = p.page(current_page).object_list
+
+#     return Response(result)
+
+
+### pabilisin ang outbound test
 @api_view(["POST"])
 def outbound_history_search_view(request, *args, **kwargs):
     body_unicode = request.body.decode("utf-8")
@@ -550,51 +607,75 @@ def outbound_history_search_view(request, *args, **kwargs):
     page_size = body.get("pageSize")
     sort_by = body.get("sortBy") or "-updated_at"
     filter_by = body.get("filterBy")
-    if filter_by:
-        if body.get("filterBy") == "user":
-            filter_by = f"{body.get('filterBy')}"
-            filter_id = body.get("filterId")
-            user_id_first = User.objects.filter(first_name__contains=filter_id).values(
-                "id"
-            )
-            user_id_last = User.objects.filter(last_name__contains=filter_id).values(
-                "id"
-            )
-            user_id_list = list(chain(user_id_first, user_id_last))
-            user_id_list = list(
-                set([item for d in user_id_list for item in d.values()])
-            )
-            queryset = (
-                OutboundHistory.objects.filter(user__in=user_id_list)
-                .all()
-                .order_by(sort_by)
-            )
-        else:
-            filter_by = f"{body.get('filterBy')}__contains"
-            filter_id = body.get("filterId")
-
+    filter_id = body.get("filterId")
+    search_key = body.get("searchKey")
     filter_dict = None
 
-    if filter_by and filter_id:
-        filter_dict = {filter_by: filter_id}
+    if (filter_by and filter_id) or search_key:
+        filter_dict = {}
 
-    if filter_dict and filter_by != "user":
-        queryset = OutboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
+        if filter_by and filter_id:
+            if filter_by == "user":
+                user_id_first = User.objects.filter(
+                    first_name__icontains=filter_id
+                ).values("id")
+                user_id_last = User.objects.filter(
+                    last_name__icontains=filter_id
+                ).values("id")
+                user_id_list = list(chain(user_id_first, user_id_last))
+                user_id_list = list(
+                    set([item for d in user_id_list for item in d.values()])
+                )
+                filter_dict["user__in"] = user_id_list
+                pass
+            elif filter_by in ("warehouse", "supplier", "warehouse_from"):
+                if filter_by == "warehouse_from":
+                    filter_by = "warehouse"
+                filter_dict[f"{filter_by}__{filter_by}__icontains"] = filter_id
+            else:
+                filter_dict[f"{filter_by}__icontains"] = filter_id
 
-    if not filter_dict:
-        queryset = OutboundHistory.objects.filter().all().order_by(sort_by)
-
-    data = OutboundHistorySerializer(queryset, many=True).data
-    p = Paginator(data, page_size)
+        if search_key:
+            filter_dict["part__icontains"] = search_key
 
     result = {}
-    result["metadata"] = {}
 
+    if not (current_page and page_size):
+        if filter_dict:
+            result["data"] = (
+                OutboundHistory.objects.filter(**filter_dict)
+                .all()
+                .order_by(sort_by)
+                .values()
+            )
+        else:
+            result["data"] = (
+                OutboundHistory.objects.filter().all().order_by(sort_by).values()
+            )
+        return Response(result)
+
+    if filter_dict:
+        p = Paginator(
+            OutboundHistory.objects.filter(**filter_dict).all().order_by(sort_by),
+            page_size,
+        )
+    else:
+        p = Paginator(
+            OutboundHistory.objects.filter().all().order_by(sort_by), page_size
+        )
+
+    result["metadata"] = {}
     result["metadata"]["total"] = p.count
     result["metadata"]["numPages"] = p.num_pages
     result["data"] = p.page(current_page).object_list
+    result["data"] = OutboundHistorySerializer(
+        p.page(current_page).object_list, many=True
+    ).data
 
     return Response(result)
+
+
+###
 
 
 #### DANGER ####
