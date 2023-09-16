@@ -30,6 +30,7 @@ class PartNoCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
+        body['warehouse'] = "Main Warehouse"
         serializer = PartNoSerializer(data=body) 
         is_valid = False
 
@@ -96,11 +97,6 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
     search_key = body.get('searchKey')
     filter_dict = None
 
-    # contains_filter = {
-    #     "part": "part__icontains",
-    #     "brand": "brand__name__icontains"
-    # }
-
     if (filter_by and filter_id) or search_key:
         filter_dict = {}
 
@@ -111,15 +107,6 @@ def part_no_search_view(request, pk=None, *args, **kwargs):
                 filter_dict[f"{filter_by}__icontains"] = filter_id
 
         if search_key: filter_dict['part__icontains'] = search_key
-
-
-###
-    # if (filter_by and filter_id) or search_key:
-
-    #     if filter_by and filter_id:
-    #         filter_dict[filter_by] = filter_id
-    #     if search_key: filter_dict['part__part__contains'] = search_key
-###
 
     result = {}
     if not (current_page and page_size):
