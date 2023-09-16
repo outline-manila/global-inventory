@@ -597,6 +597,7 @@ def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
 
 
 ### pabilisin ang outbound test
+@api_view(["POST"])
 def outbound_history_search_view(request, *args, **kwargs):
     body_unicode = request.body.decode("utf-8")
     body = json.loads(body_unicode)
