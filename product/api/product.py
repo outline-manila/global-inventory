@@ -627,7 +627,9 @@ def outbound_history_search_view(request, *args, **kwargs):
                 )
                 filter_dict["user__in"] = user_id_list
                 pass
-            elif filter_by in ("warehouse", "supplier"):
+            elif filter_by in ("warehouse", "supplier", "warehouse_from"):
+                if filter_by == "warehouse_from":
+                    filter_by = "warehouse"
                 filter_dict[f"{filter_by}__{filter_by}__icontains"] = filter_id
             else:
                 filter_dict[f"{filter_by}__icontains"] = filter_id
