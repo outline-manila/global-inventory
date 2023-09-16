@@ -337,6 +337,54 @@ class InboundHistoryUpdateAPIView(generics.UpdateAPIView):
 inbound_history_update_view = InboundHistoryUpdateAPIView.as_view()
 
 
+# @api_view(['POST'])
+# def inbound_history_search_view(request, *args, **kwargs):
+
+#     body_unicode = request.body.decode('utf-8')
+#     body = json.loads(body_unicode)
+
+#     current_page = body.get('currentPage') 
+#     page_size = body.get('pageSize') 
+#     sort_by = body.get('sortBy') or '-updated_at'
+#     filter_by = body.get('filterBy')
+#     if filter_by:
+#         if body.get('filterBy') == 'user':
+#             filter_by = f"{body.get('filterBy')}"
+#             filter_id = body.get('filterId')
+#             user_id_first = User.objects.filter(first_name__contains=filter_id).values('id')
+#             user_id_last = User.objects.filter(last_name__contains=filter_id).values('id')
+#             user_id_list = list(chain(user_id_first,user_id_last))
+#             user_id_list = list(set([item for d in user_id_list for item in d.values()]))
+#             queryset = InboundHistory.objects.filter(user__in=user_id_list).all().order_by(sort_by)
+#         else:
+#             filter_by = f"{body.get('filterBy')}__contains"
+#             filter_id = body.get('filterId')
+
+#     filter_dict = None
+
+#     if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+
+#     if filter_dict and filter_by != 'user':
+#         queryset = InboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
+
+#     if not filter_dict:
+#         queryset = InboundHistory.objects.filter().all().order_by(sort_by)
+
+#     data = InboundHistorySerializer(queryset, many=True).data
+
+#     p = Paginator(data, page_size)
+
+#     result = {}
+#     result['metadata'] = {}
+
+#     result['metadata']['total'] = p.count
+#     result['metadata']['numPages'] = p.num_pages
+#     result['data'] = p.page(current_page).object_list
+
+#     return Response(result)
+
+
+### test pabilisin ang inbound history ###
 @api_view(['POST'])
 def inbound_history_search_view(request, *args, **kwargs):
 
@@ -347,44 +395,44 @@ def inbound_history_search_view(request, *args, **kwargs):
     page_size = body.get('pageSize') 
     sort_by = body.get('sortBy') or '-updated_at'
     filter_by = body.get('filterBy')
-    if filter_by:
-        if body.get('filterBy') == 'user':
-            filter_by = f"{body.get('filterBy')}"
-            filter_id = body.get('filterId')
-            user_id_first = User.objects.filter(first_name__contains=filter_id).values('id')
-            user_id_last = User.objects.filter(last_name__contains=filter_id).values('id')
-            user_id_list = list(chain(user_id_first,user_id_last))
-            user_id_list = list(set([item for d in user_id_list for item in d.values()]))
-            queryset = InboundHistory.objects.filter(user__in=user_id_list).all().order_by(sort_by)
-        else:
-            filter_by = f"{body.get('filterBy')}__contains"
-            filter_id = body.get('filterId')
-
+    filter_id = body.get('filterId')
+    search_key = body.get('searchKey')
     filter_dict = None
 
-    if filter_by and filter_id: filter_dict = {filter_by: filter_id}
+    if (filter_by and filter_id) or search_key:
+        filter_dict = {}
 
-    if filter_dict and filter_by != 'user':
-        queryset = InboundHistory.objects.filter(**filter_dict).all().order_by(sort_by)
+        if filter_by and filter_id:
+            if filter_by == 'brand':
+                filter_dict[f"brand__brand__icontains"] = filter_id
+            else:
+                filter_dict[f"{filter_by}__icontains"] = filter_id
 
-    if not filter_dict:
-        queryset = InboundHistory.objects.filter().all().order_by(sort_by)
-
-    data = InboundHistorySerializer(queryset, many=True).data
-
-    # print(f"Hello {data}")
-
-    p = Paginator(data, page_size)
+        if search_key: filter_dict['part__icontains'] = search_key
 
     result = {}
-    result['metadata'] = {}
 
+    if not (current_page and page_size):
+        if filter_dict:
+            result['data'] = InboundHistory.objects.filter(**filter_dict).all().order_by(sort_by).values()
+        else:
+            result['data'] = InboundHistory.objects.filter().all().order_by(sort_by).values()
+        return Response(result)
+
+    if filter_dict:
+        p = Paginator(InboundHistory.objects.filter(**filter_dict).all().order_by(sort_by), page_size)
+    else:
+        p = Paginator(InboundHistory.objects.filter().all().order_by(sort_by), page_size)
+
+    
+    result['metadata'] = {}
     result['metadata']['total'] = p.count
     result['metadata']['numPages'] = p.num_pages
     result['data'] = p.page(current_page).object_list
+    result['data'] = InboundHistorySerializer(p.page(current_page).object_list, many=True).data
 
     return Response(result)
-
+### end test ###
 
 @api_view(['POST'])
 def inbound_history_delete_apiview(request, pk=None, *args, **kwargs):
